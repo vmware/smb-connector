@@ -35,7 +35,7 @@ The directory structure is
 
 Fetch Samba code
 ----------------
-Download modified samba code (version 4.6.6) from "add vmware github repo link here"
+Download modified samba code (version 4.6.6) from "add vmware github repo link here".
 Extract the same as samba folder in root folder of the project
 
 Build Instructions
