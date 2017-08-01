@@ -1,0 +1,23 @@
+/*
+ * Copyright (C) 2017 VMware, Inc. All rights reserved.
+ *
+ * SPDX-License-Identifier: GPL-3.0
+ *
+ */
+
+import "request.proto";
+import "response.proto";
+message Command {
+    required string requestId = 1;
+    required uint32 cmd = 2;
+}
+message Status {
+    required int32 code = 1;
+    required string msg = 2;
+}
+message Message {
+    required Command command = 1;
+    optional RequestPacket requestPacket = 2;
+    optional ResponsePacket responsePacket = 3;
+    optional Status status = 4;
+}

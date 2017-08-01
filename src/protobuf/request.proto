@@ -1,0 +1,33 @@
+/*
+ * Copyright (C) 2017 VMware, Inc. All rights reserved.
+ *
+ * SPDX-License-Identifier: GPL-3.0
+ *
+ */
+
+message SmbDetails {
+    required string workgroup = 1;
+    required string username = 2;
+    required string password = 3;
+    required string url = 4;
+}
+message RequestPacket {
+    optional SmbDetails smbDetails = 1;
+    optional FolderStructureRequest folderStructureRequest = 2;
+    optional RangeDownloadRequest rangeDownloadRequest = 3;
+    optional UploadRequestData uploadRequestData = 4;
+}
+message FolderStructureRequest {
+    optional bool showOnlyFolders = 1;
+    optional bool showHiddenFiles = 2;
+    required uint32 pageSize = 3;
+    optional uint32 level = 4;
+}
+message RangeDownloadRequest {
+    required uint64 start = 1;
+    required uint64 end = 2;
+    required uint64 chunkSize = 3;
+}
+message UploadRequestData {
+    required bytes data = 1;
+}

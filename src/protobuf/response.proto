@@ -1,0 +1,41 @@
+/*
+ * Copyright (C) 2017 VMware, Inc. All rights reserved.
+ *
+ * SPDX-License-Identifier: GPL-3.0
+ *
+ */
+
+message ResponsePacket {
+    optional FolderStructureResponse folderStructureResponse = 1;
+    optional DownloadInitResponse downloadInitResponse = 2;
+    optional DownloadDataResponse downloadDataResponse = 3;
+    optional TestConnectionResponse testConnectionResponse = 4;
+    optional AddFolderResponse  addFolderResponse = 5;
+    optional DeleteResourceResponse deleteResourceResponse = 6;
+}
+message FolderStructureResponse {
+    repeated FileInformation fileInformation = 1; // Repeated for folder structure response
+}
+message FileInformation {
+    optional string name = 1;
+    optional uint32 resourceType = 2;
+    optional uint64 size = 3;
+    optional uint64 createTime = 4;
+    optional uint64 modifiedTime = 5;
+    optional bool isDirectory = 6;
+}
+message DownloadInitResponse {
+    required FileInformation fileInformation = 1;
+}
+message DownloadDataResponse {
+    required bytes data = 1;
+}
+message TestConnectionResponse {
+    required FileInformation fileInformation = 1;
+}
+message AddFolderResponse {
+    required FileInformation fileInformation = 1;
+}
+message DeleteResourceResponse {
+    required FileInformation fileInformation = 1;
+}
