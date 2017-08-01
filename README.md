@@ -18,7 +18,7 @@ Dependencies
 gnutls, libprotobuf, log4cpp, google-test (gtest), doxygen (optional, required to generate documentation)
 
 The directory structure is
-
+```
 |-src
     |- samba               - samba library [https://github.com/samba-team/samba]
     |- src
@@ -31,7 +31,7 @@ The directory structure is
         |- socket           - IO implementation for Unix Domain Socket using epoll
         |- core             - Core classes implementation (SessionManager, Client and Server)
     |- unit-tests          - unit test code
-
+```
 
 Fetch Samba code
 ----------------
