@@ -304,7 +304,7 @@ int main(int argc, char *argv[])
     ALWAYS_LOG("smb-connector version %s", SMBCONNECTOR_VERSION);
 
     ISmbConnector *smbConnector = NULL;
-    if (argc < 3)
+    if (argc < 2)
     {
         print_help();
         logger->Quit();
