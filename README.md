@@ -1,32 +1,71 @@
 
+SMB-Connector - C++ connector implementation around libsmbclient
+=============================================
 
-# smb-connector
+Overview
+---------
 
-## Overview
+SMB-Connector is a c++ connector around libsmbclient (samba.org).
+It uses google's protocol buffers message for communication.
 
-## Try it out
+Supported OS Versions
+----------------------
+RHEL 7, SLES12-SP2
 
-### Prerequisites
 
-* Prereq 1
-* Prereq 2
-* Prereq 3
+Dependencies
+---------------------
+gnutls, libprotobuf, log4cpp, google-test (gtest), doxygen (optional, required to generate documentation)
 
-### Build & Run
+The directory structure is
 
-1. Step 1
-2. Step 2
-3. Step 3
+|-src
+    |- samba               - samba library [https://github.com/samba-team/samba]
+    |- src
+        |- base             - Logging, Error implementation
+        |- packet           - Packet, Packet Creator, Packet Parser implementation
+        |- protobuf         - protocol buffer files
+        |- protocol_buffers - auto-generated files using protocol buffers (should be removed from code base)
+        |- processor        - Processor implementation which process Request
+        |- smb              - c++ wrapper around libsmbclient apis
+        |- socket           - IO implementation for Unix Domain Socket using epoll
+        |- core             - Core classes implementation (SessionManager, Client and Server)
+    |- unit-tests          - unit test code
 
-## Documentation
 
-## Releases & Major Branches
+Fetch Samba code
+----------------
+Download modified samba code (version 4.6.6) from "add vmware github repo link here"
+Extract the same as samba folder in root folder of the project
 
-## Contributing
+Build Instructions
+--------------------
 
-The smb-connector project team welcomes contributions from the community. If you wish to contribute code and you have not
-signed our contributor license agreement (CLA), our bot will update the issue when you open a Pull Request. For any
-questions about the CLA process, please refer to our [FAQ](https://cla.vmware.com/faq). For more detailed information,
-refer to [CONTRIBUTING.md](CONTRIBUTING.md).
+The project uses 'cmake' to build SMBConnector and 'make' to build samba
 
-## License
+Ensure above mentioned dependencies are installed.
+
+1. build_all.sh             - Samba and SMB-Connector debug as well as release build
+2. build_debug.sh           - Samba and SMB-Connector debug build
+3. build_rel.sh             - Samba and SMB-Connector release build
+4. build_samba_debug.sh     - Samba debug build
+5. build_samba_rel.sh       - Samba release build
+6. cmake_debug.sh           - SMB-Connector debug build
+7. cmake_rel.sh             - SMB-Connector release build
+8. generate_gcov.sh         - Generates *.gcov file in gcov_report folder
+9. generate_proto_buf.sh    - Generates protobuf files from .proto files
+
+
+Run Unit-tests
+---------------------
+
+SMB-Connector uses gtest (google testing framework) for executing unit-tests
+
+A local samba server needs to be setup
+
+Steps to setup a local Samba server for unit-test
+    1. Install Samba (yum install samba)
+    2. Add a 'test' user (useradd -m test)
+    3. Set the password for the 'test', the password should be 'test' (passwd test)
+    4. Add it as samba user (smbpasswd -a test)
+    5. Allow samba through SELinux (sudo setsebool -P samba_export_all_rw on)
