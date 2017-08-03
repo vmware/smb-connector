@@ -73,7 +73,7 @@ public:
 /* client mode settings */
 #define C_OP_CODE               "op_code"
 #define C_URL                   "url"
-#define C_USER_NAME             "user"
+#define C_USER_NAME             "user_name"
 #define C_PASSWORD              "password"
 #define C_WORK_GROUP            "workgroup"
 
@@ -92,6 +92,9 @@ public:
 #define C_OUT_FILE              "output_file"
 
 #define C_CONF_FILE             "conf_file"
+
+#define C_USER                  "user"
+#define C_GROUP                 "group"
 
 ////////////////////////////////////////////////////////////////////////////////////////
 //                                                                                    //                                                                                        //

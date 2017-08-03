@@ -29,9 +29,12 @@ static std::string folder = "unit_test";
 static struct stat *_stat = NULL;
 static Server *server = NULL;
 
+Configuration &c = Configuration::GetInstance();
 
 TEST(AddFolderProcessor, Init)
 {
+    c.Set(C_SMB_CONF, "../smb.conf");
+    c.Set(C_CONF_FILE, "../smb-connector.conf");
     should_exit = 1;
     server = ALLOCATE(Server);
     processor = ALLOCATE(AddFolderProcessor);
@@ -90,6 +93,20 @@ TEST(AddFolderProcessor, add_folder_req_success)
     processor->SetRequestId(request_id);
     packet->Reset();
     FREE(packet);
+    packet = ALLOCATE(Packet);
+    EXPECT_EQ(SMB_SUCCESS, processor->PacketCreator()->CreatePacket(packet, ADD_FOLDER_INIT_REQ, NULL));
+    EXPECT_EQ(SMB_SUCCESS, processor->ProcessRequest(packet));
+    packet->Reset();
+    FREE(packet);
+
+    processor->SetUrl(processor->Url()+"/nested1");
+    packet = ALLOCATE(Packet);
+    EXPECT_EQ(SMB_SUCCESS, processor->PacketCreator()->CreatePacket(packet, ADD_FOLDER_INIT_REQ, NULL));
+    EXPECT_EQ(SMB_SUCCESS, processor->ProcessRequest(packet));
+    packet->Reset();
+    FREE(packet);
+
+    processor->SetUrl(processor->Url()+"/nested2");
     packet = ALLOCATE(Packet);
     EXPECT_EQ(SMB_SUCCESS, processor->PacketCreator()->CreatePacket(packet, ADD_FOLDER_INIT_REQ, NULL));
     EXPECT_EQ(SMB_SUCCESS, processor->ProcessRequest(packet));

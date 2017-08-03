@@ -8,6 +8,7 @@
 #include <getopt.h>
 #include <fstream>
 #include <sys/prctl.h>
+#include <dirent.h>
 
 #ifdef _DEBUG_
 #include <gtest/gtest.h>
@@ -85,6 +86,47 @@ static struct option long_options[] =
         {"conf_file",       required_argument, 0, 'k'},
         {0, 0, 0, 0}
     };
+
+
+/*!
+ * Does change user and group for the process
+ *
+ * @param user       - User name of running process
+ * @param group      - Group name of user of running process
+ */
+void do_chuser(const char * user, const char * group)
+{
+    struct group * linux_group = NULL;
+    struct passwd * linux_user = NULL;
+
+    if (strlen(group) > 0)
+    {
+        linux_group = getgrnam(group);;
+    }
+
+    if (strlen(user) > 0)
+    {
+        linux_user = getpwnam(user);
+    }
+
+    if (linux_group)
+    {
+        if (setgid(linux_group->gr_gid) != 0)
+        {
+            ERROR_LOG("setgid failed with gid=%d", linux_group->gr_gid);
+        }
+        INFO_LOG("Set group to %s", linux_group->gr_name);
+    }
+
+    if (linux_user)
+    {
+        if (setuid(linux_user->pw_uid) != 0)
+        {
+            ERROR_LOG("setuid %d failed", linux_user->pw_uid);
+        }
+        INFO_LOG("Set user to %s", linux_user->pw_name);
+    }
+}
 
 static void print_help()
 {
@@ -338,6 +380,19 @@ int main(int argc, char *argv[])
         }
         smbConnector->Init(c[C_SOCK_NAME]);
     }
+
+    // change permisson for domain-socket file
+    // so that it can be deleted later while going down
+    struct passwd *linux_user = getpwnam(c[C_USER]);
+    if(linux_user)
+    {
+        chown(c[C_SOCK_NAME],
+              linux_user->pw_uid,
+              linux_user->pw_gid);
+    }
+
+    // drop user to nobody(default)
+    do_chuser(c[C_USER], c[C_GROUP]);
 
     smbConnector->Runloop();
 
