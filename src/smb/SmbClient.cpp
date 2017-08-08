@@ -246,13 +246,13 @@ int SmbClient::OpenDir()
  */
 struct file_info *SmbClient::GetNextFileInfo()
 {
-    DEBUG_LOG("SmbClient::GetAttributes");
+    DEBUG_LOG("SmbClient::GetNextFileInfo");
     if (_file == NULL)
     {
-        DEBUG_LOG("SmbClient::GetAttributes try to get stats as file");
+        DEBUG_LOG("SmbClient::GetNextFileInfo try to get stats as file");
         return NULL;
     }
-    return smbc_getFunctionListDir(_ctx)(_ctx, _file);
+    return smbc_getFunctionReaddirPlus(_ctx)(_ctx, _file);
 }
 
 /*!
@@ -265,7 +265,7 @@ struct file_info *SmbClient::GetNextFileInfo()
  */
 struct smbc_dirent *SmbClient::GetNextDirent()
 {
-    DEBUG_LOG("SmbClient::GetNextShare");
+    DEBUG_LOG("SmbClient::GetNextDirent");
     assert(_file != NULL);
     return smbc_getFunctionReaddir(_ctx)(_ctx, _file);
 }
