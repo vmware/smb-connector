@@ -231,9 +231,7 @@ int DownloadProcessor::download_file_async()
             }
             else
             {
-                ERROR_LOG("DownloadProcessor::DownloadFileAsync Download error");
-                ERROR_LOG("DownloadProcessor::DownloadFileAsync Smb-server %s closed the connection",
-                          _url.c_str());
+                ERROR_LOG("DownloadProcessor::DownloadFileAsync Download error, SMB server %s closed connection", _url.c_str());
                 int err = errno;
                 Packet *resp = ALLOCATE(Packet);
                 _packet_creator->CreateStatusPacket(resp, DOWNLOAD_ERROR, err, true);
