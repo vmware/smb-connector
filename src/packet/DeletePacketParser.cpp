@@ -55,7 +55,7 @@ int DeletePacketParser::parse_delete_resp(Packet *packet)
     DEBUG_LOG("DeletePacketParser::parse_delete_resp");
     assert(packet->_pb_msg != NULL);
     packet->Dump();
-    DEBUG_LOG("DeletePacketParser::parse_delete_resp IsDirectory: %d",
+    INFO_LOG("DeletePacketParser::parse_delete_resp IsDirectory: %d",
               packet->_pb_msg->responsepacket().deleteresourceresponse().fileinformation().isdirectory());
     return SMB_SUCCESS;
 }

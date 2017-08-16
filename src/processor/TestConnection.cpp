@@ -41,16 +41,17 @@ int TestConnection::process_test_connection_req()
     if (ret != SMB_SUCCESS)
     {
         int err = errno;
-        DEBUG_LOG("TestConnection::process_test_connection_req open as directory error:%d", err);
+        WARNING_LOG("TestConnection::process_test_connection_req open as directory error:%d", err);
         if (err == ENOTDIR)
         {
-            DEBUG_LOG("TestConnection::process_test_connection_req trying to open as file now");
+            INFO_LOG("TestConnection::process_test_connection_req trying to open as file now");
             ret = SmbClient::GetInstance()->OpenFile(O_RDONLY);
         }
 
         /* definitely an error */
         if (ret != SMB_SUCCESS)
         {
+            ERROR_LOG("TestConnection::process_test_connection_req open failed");
             Packet *resp = ALLOCATE(Packet);
             _packet_creator->CreateStatusPacket(resp, TEST_CONNECTION_ERROR_RESP, err, true);
             _sessionManager->PushResponse(resp);
@@ -143,7 +144,7 @@ int TestConnection::ProcessRequest(Packet *packet)
     int ret = _packet_parser->ParsePacket(packet);
     if (ret != SMB_SUCCESS)
     {
-        DEBUG_LOG("TestConnection::ProcessRequest, invalid packet");
+        ERROR_LOG("TestConnection::ProcessRequest, invalid packet");
         Packet *req = ALLOCATE(Packet);
         _packet_creator->CreateStatusPacket(req, TEST_CONNECTION_ERROR_RESP, ret);
         _sessionManager->PushResponse(req);

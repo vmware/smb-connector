@@ -87,10 +87,10 @@ int Packet::PutData()
     _data = ALLOCATE_ARR(char, GetLength());
     if (!ALLOCATED(_data))
     {
-        DEBUG_LOG("Packet::PutData, memory allocation failed");
+        ERROR_LOG("Packet::PutData, memory allocation failed");
         return SMB_ERROR;
     }
-    DEBUG_LOG("Message Length %ld", _pb_msg->SerializeAsString().length());
+    INFO_LOG("Message Length %ld", _pb_msg->SerializeAsString().length());
     memcpy(_data, _pb_msg->SerializeAsString().data(), _pb_msg->SerializeAsString().size());
     return SMB_SUCCESS;
 }
@@ -106,15 +106,15 @@ int Packet::ParseProtoBuffer()
     _pb_msg = ALLOCATE(Message);
     if (!ALLOCATED(_pb_msg))
     {
-        DEBUG_LOG("Packet::ParseProtoBuffer allocation failed");
+        ERROR_LOG("Packet::ParseProtoBuffer allocation failed");
         return SMB_ALLOCATION_FAILED;
     }
 
     if (!_pb_msg->ParseFromArray(_data, GetLength()))
     {
+        ERROR_LOG("Packet::ParseProtoBuffer Cannot parse Message");
         FREE(_pb_msg);
         _pb_msg = NULL;
-        ERROR_LOG("Packet::ParseProtoBuffer Cannot parse Message");
         return SMB_ERROR;
     }
     else

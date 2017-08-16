@@ -58,7 +58,7 @@ int DownloadPacketParser::parse_download_req_init_resp(Packet *packet)
     DownloadProcessor *_processor = dynamic_cast<DownloadProcessor *>(RequestProcessor::GetInstance());
     if (IS_NULL(_processor))
     {
-        DEBUG_LOG("DownloadPacketParser::parse_download_req_init_resp invalid RequestProcessor");
+        ERROR_LOG("DownloadPacketParser::parse_download_req_init_resp invalid RequestProcessor");
         return SMB_ERROR;
     }
 
@@ -69,7 +69,7 @@ int DownloadPacketParser::parse_download_req_init_resp(Packet *packet)
         packet->_pb_msg->responsepacket().downloadinitresponse().fileinformation().modifiedtime());
     _processor->SetEndOffset(packet->_pb_msg->responsepacket().downloadinitresponse().fileinformation().size());
 
-    DEBUG_LOG("DownloadPacketParser::parse_download_req_init_resp size %d c_time %ld m_time %ld", _processor->Size(),
+    INFO_LOG("DownloadPacketParser::parse_download_req_init_resp size %d c_time %ld m_time %ld", _processor->Size(),
               _processor->CreateTime(), _processor->ModifiedTime());
 
     return SMB_SUCCESS;
@@ -93,7 +93,7 @@ int DownloadPacketParser::parse_download_req_data(Packet *packet)
     DownloadProcessor *_processor = dynamic_cast<DownloadProcessor *>(RequestProcessor::GetInstance());
     if (IS_NULL(_processor))
     {
-        DEBUG_LOG("DownloadPacketParser::parse_download_req_data invalid RequestProcessor");
+        ERROR_LOG("DownloadPacketParser::parse_download_req_data invalid RequestProcessor");
         return SMB_ERROR;
     }
 

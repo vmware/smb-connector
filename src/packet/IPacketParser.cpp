@@ -48,7 +48,7 @@ int IPacketParser::parse_credentials(Packet *packet)
  */
 int IPacketParser::parse_status(const Status &status)
 {
-    DEBUG_LOG("Status-code %d, Status-msg %s", status.code(), status.msg().c_str());
+    INFO_LOG("Status-code %d, Status-msg %s", status.code(), status.msg().c_str());
     return SMB_SUCCESS;
 }
 

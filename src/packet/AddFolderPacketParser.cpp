@@ -53,7 +53,7 @@ int AddFolderPacketParser::parse_add_folder_resp(Packet *packet)
     DEBUG_LOG("AddFolderPacketParser::parse_add_folder_resp");
     assert(packet->_pb_msg != NULL);
     packet->Dump();
-    DEBUG_LOG("AddFolderPacketParser::parse_add_folder_resp CreateTime %ld, ModifiedTime %ld",
+    INFO_LOG("AddFolderPacketParser::parse_add_folder_resp CreateTime %ld, ModifiedTime %ld",
               packet->_pb_msg->responsepacket().addfolderresponse().fileinformation().createtime(),
               packet->_pb_msg->responsepacket().addfolderresponse().fileinformation().modifiedtime());
     return SMB_SUCCESS;

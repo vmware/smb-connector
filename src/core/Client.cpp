@@ -111,6 +111,7 @@ int Client::Init(const char *path, int op_code)
             DownloadProcessor *processor = dynamic_cast<DownloadProcessor *>(RequestProcessor::GetInstance());
             if (processor == NULL)
             {
+                assert(false);
                 ERROR_LOG("Client::Init dynamic_cast<DownloadProcessor> failed");
                 return SMB_ERROR;
             }
@@ -125,6 +126,7 @@ int Client::Init(const char *path, int op_code)
             UploadProcessor *processor = dynamic_cast<UploadProcessor *>(RequestProcessor::GetInstance());
             if (processor == NULL)
             {
+                assert(false);
                 ERROR_LOG("Client::Init dynamic_cast<UploadProcessor> failed");
                 return SMB_ERROR;
             }

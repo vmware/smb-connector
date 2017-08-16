@@ -44,14 +44,14 @@ int OpenDirPacketParser::parse_get_structure_req(Packet *packet)
 
     if(packet->_pb_msg->requestpacket().folderstructurerequest().pagesize() <= 0)
     {
-        DEBUG_LOG("OpenDirPacketParser::parse_get_structure_req page-size <=0");
+        WARNING_LOG("OpenDirPacketParser::parse_get_structure_req page-size <=0");
         return SMB_ERROR;
     }
 
     OpenDirReqProcessor *_processor = dynamic_cast<OpenDirReqProcessor *>(RequestProcessor::GetInstance());
     if (IS_NULL(_processor))
     {
-        DEBUG_LOG("OpenDirPacketParser::parse_get_structure_req invalid RequestProcessor");
+        ERROR_LOG("OpenDirPacketParser::parse_get_structure_req invalid RequestProcessor");
         return SMB_ERROR;
     }
 

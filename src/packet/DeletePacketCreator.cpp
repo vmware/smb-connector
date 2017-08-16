@@ -42,14 +42,14 @@ int DeletePacketCreator::create_delete_req(Packet *packet)
     DeleteProcessor *_processor = dynamic_cast<DeleteProcessor *>(RequestProcessor::GetInstance());
     if (IS_NULL(_processor))
     {
-        DEBUG_LOG("DeletePacketCreator::create_delete_req invalid RequestProcessor");
+        ERROR_LOG("DeletePacketCreator::create_delete_req invalid RequestProcessor");
         return SMB_ERROR;
     }
 
     Command *cmd = ALLOCATE(Command);
     if (!ALLOCATED(cmd))
     {
-        DEBUG_LOG("DeletePacketCreator::create_delete_req, memory allocation failed");
+        ERROR_LOG("DeletePacketCreator::create_delete_req, memory allocation failed");
         FREE(packet->_pb_msg);
         return SMB_ALLOCATION_FAILED;
     }
@@ -61,7 +61,7 @@ int DeletePacketCreator::create_delete_req(Packet *packet)
     packet->PutHeader();
     if (packet->PutData() != SMB_SUCCESS)
     {
-        DEBUG_LOG("DeletePacketCreator::create_delete_req packet creation failed");
+        ERROR_LOG("DeletePacketCreator::create_delete_req packet creation failed");
         FREE(packet->_pb_msg); /*pb will take care of freeing up all resources contained in it */
         return SMB_ERROR;
     }
@@ -84,7 +84,7 @@ int DeletePacketCreator::create_delete_resp(Packet *packet, packet_data *data)
     DeleteProcessor *_processor = dynamic_cast<DeleteProcessor *>(RequestProcessor::GetInstance());
     if (IS_NULL(_processor))
     {
-        DEBUG_LOG("DeletePacketCreator::create_delete_resp invalid RequestProcessor");
+        ERROR_LOG("DeletePacketCreator::create_delete_resp invalid RequestProcessor");
         return SMB_ERROR;
     }
 
@@ -94,7 +94,7 @@ int DeletePacketCreator::create_delete_resp(Packet *packet, packet_data *data)
     FileInformation *fInfo = ALLOCATE(FileInformation);
     if (!ALLOCATED(cmd) || !ALLOCATED(resp) || !ALLOCATED(delResp) || !ALLOCATED(fInfo))
     {
-        DEBUG_LOG("DeletePacketCreator::create_delete_resp, memory allocation failed");
+        ERROR_LOG("DeletePacketCreator::create_delete_resp, memory allocation failed");
         FREE(cmd);
         FREE(resp);
         FREE(delResp);
@@ -118,7 +118,7 @@ int DeletePacketCreator::create_delete_resp(Packet *packet, packet_data *data)
     packet->PutHeader();
     if (packet->PutData() != SMB_SUCCESS)
     {
-        DEBUG_LOG("DeletePacketCreator::create_delete_resp packet creation failed");
+        ERROR_LOG("DeletePacketCreator::create_delete_resp packet creation failed");
         FREE(packet->_pb_msg); /*pb will take care of freeing up all resources contained in it */
         return SMB_ERROR;
     }
@@ -141,14 +141,14 @@ int DeletePacketCreator::CreatePacket(Packet *packet, int op_code, void *data)
 
     if (packet == NULL)
     {
-        DEBUG_LOG("DeletePacketCreator::CreatePacket, NULL packet");
+        ERROR_LOG("DeletePacketCreator::CreatePacket, NULL packet");
         return SMB_ERROR;
     }
 
     packet->_pb_msg = ALLOCATE(Message);
     if (!ALLOCATED(packet->_pb_msg))
     {
-        DEBUG_LOG("DeletePacketCreator::CreatePacket, memory allocation failed");
+        ERROR_LOG("DeletePacketCreator::CreatePacket, memory allocation failed");
         return SMB_ALLOCATION_FAILED;
     }
 
@@ -160,7 +160,7 @@ int DeletePacketCreator::CreatePacket(Packet *packet, int op_code, void *data)
         {
             if (data == NULL)
             {
-                DEBUG_LOG("DeletePacketCreator::CreatePacket, data missing for DELETE_INIT_RESP");
+                ERROR_LOG("DeletePacketCreator::CreatePacket, data missing for DELETE_INIT_RESP");
                 return SMB_ERROR;
             }
             return create_delete_resp(packet, static_cast<packet_data *>(data));

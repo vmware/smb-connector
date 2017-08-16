@@ -45,7 +45,7 @@ int UploadProcessor::process_upload_req_init()
     int ret = SmbClient::GetInstance()->UploadInit(_request_id);
     if (ret != SMB_SUCCESS)
     {
-        DEBUG_LOG("UploadProcessor::process_upload_req_init failed for %s, return error", _url.c_str());
+        ERROR_LOG("UploadProcessor::process_upload_req_init failed for %s, return error", _url.c_str());
         int err = errno;
         Packet *resp = ALLOCATE(Packet);
         _packet_creator->CreateStatusPacket(resp, UPLOAD_ERROR, err, true);
@@ -96,7 +96,7 @@ int UploadProcessor::process_upload_req_data(Packet *packet)
         /* smb_write failed */
         /* delete the tmp file */
         int err = errno;
-        DEBUG_LOG("UploadProcessor::process_upload_req_data upload failed, SmbClient-server[%s] closed connection",
+        ERROR_LOG("UploadProcessor::process_upload_req_data upload failed, SmbClient-server[%s] closed connection",
                   _url.c_str());
         Packet *req = ALLOCATE(Packet);
         _packet_creator->CreateStatusPacket(req, UPLOAD_ERROR, err, true);
@@ -183,7 +183,7 @@ int UploadProcessor::upload_async()
 
     if (!_file.is_open())
     {
-        DEBUG_LOG("UploadProcessor::upload_async file open failed, send error");
+        ERROR_LOG("UploadProcessor::upload_async file open failed, send error");
         req = ALLOCATE(Packet);
         _packet_creator->CreateStatusPacket(req, UPLOAD_ERROR, SMB_NOT_FOUND);
         _sessionManager->PushResponse(req);
@@ -210,13 +210,13 @@ int UploadProcessor::upload_async()
             _sessionManager->PushResponse(req);
             if (_sessionManager->ProcessWriteEvent() != SMB_SUCCESS)
             {
-                DEBUG_LOG("UploadProcessir::upload_async send failed, bail out");
+                WARNING_LOG("UploadProcessir::upload_async send failed, bail out");
                 return SMB_ERROR;
             }
         }
         else
         {
-            DEBUG_LOG("UploadProcessor::upload_async Buffer full, pause for a while");
+            INFO_LOG("UploadProcessor::upload_async Buffer full, pause for a while");
             sleep(1);
             continue;
         }
@@ -271,7 +271,7 @@ int UploadProcessor::ProcessRequest(Packet *request)
     int ret = _packet_parser->ParsePacket(request);
     if (ret != SMB_SUCCESS)
     {
-        DEBUG_LOG("UploadProcessor::ProcessRequest packet parsing failed, return error");
+        ERROR_LOG("UploadProcessor::ProcessRequest packet parsing failed, return error");
         Packet *resp = ALLOCATE(Packet);
         _packet_creator->CreateStatusPacket(resp, UPLOAD_ERROR, ret);
         _sessionManager->PushResponse(resp);

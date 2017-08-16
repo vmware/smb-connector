@@ -42,14 +42,14 @@ int AddFolderPacketCreator::create_add_folder_req(Packet *packet)
     AddFolderProcessor *_processor = dynamic_cast<AddFolderProcessor *>(RequestProcessor::GetInstance());
     if (IS_NULL(_processor))
     {
-        DEBUG_LOG("AddFolderPacketCreator::create_add_folder_req invalid RequestProcessor");
+        ERROR_LOG("AddFolderPacketCreator::create_add_folder_req invalid RequestProcessor");
         return SMB_ERROR;
     }
 
     Command *cmd = ALLOCATE(Command);
     if (!ALLOCATED(cmd))
     {
-        DEBUG_LOG("AddFolderPacketCreator::create_add_folder_req, memory allocation failed");
+        ERROR_LOG("AddFolderPacketCreator::create_add_folder_req, memory allocation failed");
         FREE(packet->_pb_msg);
         return SMB_ALLOCATION_FAILED;
     }
@@ -62,7 +62,7 @@ int AddFolderPacketCreator::create_add_folder_req(Packet *packet)
     packet->PutHeader();
     if (packet->PutData() != SMB_SUCCESS)
     {
-        DEBUG_LOG("AddFolderPacketCreator::create_add_folder_req packet creation failed");
+        ERROR_LOG("AddFolderPacketCreator::create_add_folder_req packet creation failed");
         FREE(packet->_pb_msg); /*pb will take care of freeing up all resources contained in it */
         return SMB_ERROR;
     }
@@ -85,7 +85,7 @@ int AddFolderPacketCreator::create_add_folder_resp(Packet *packet)
     AddFolderProcessor *_processor = dynamic_cast<AddFolderProcessor *>(RequestProcessor::GetInstance());
     if (IS_NULL(_processor))
     {
-        DEBUG_LOG("AddFolderPacketCreator::create_add_folder_resp invalid RequestProcessor");
+        ERROR_LOG("AddFolderPacketCreator::create_add_folder_resp invalid RequestProcessor");
         return SMB_ERROR;
     }
 
@@ -95,7 +95,7 @@ int AddFolderPacketCreator::create_add_folder_resp(Packet *packet)
     FileInformation *fInfo = ALLOCATE(FileInformation);
     if (!ALLOCATED(cmd) || !ALLOCATED(resp) || !ALLOCATED(addResp) || !ALLOCATED(fInfo))
     {
-        DEBUG_LOG("AddFolderPacketCreator::create_add_folder_resp, memory allocation failed");
+        ERROR_LOG("AddFolderPacketCreator::create_add_folder_resp, memory allocation failed");
         FREE(cmd);
         FREE(resp);
         FREE(addResp);
@@ -124,7 +124,7 @@ int AddFolderPacketCreator::create_add_folder_resp(Packet *packet)
     packet->PutHeader();
     if (packet->PutData() != SMB_SUCCESS)
     {
-        DEBUG_LOG("AddFolderPacketCreator::create_add_folder_resp packet creation failed");
+        ERROR_LOG("AddFolderPacketCreator::create_add_folder_resp packet creation failed");
         FREE(packet->_pb_msg); /* will take care of freeing up all resources contained in it */
         return SMB_ERROR;
     }
@@ -147,14 +147,14 @@ int AddFolderPacketCreator::CreatePacket(Packet *packet, int op_code, void *data
 
     if (packet == NULL)
     {
-        DEBUG_LOG("AddFolderPacketCreator::CreatePacket, NULL packet");
+        ERROR_LOG("AddFolderPacketCreator::CreatePacket, NULL packet");
         return SMB_ERROR;
     }
 
     packet->_pb_msg = ALLOCATE(Message);
     if (!ALLOCATED(packet->_pb_msg))
     {
-        DEBUG_LOG("AddFolderPacketCreator::CreatePacket, memory allocation failed");
+        ERROR_LOG("AddFolderPacketCreator::CreatePacket, memory allocation failed");
         return SMB_ALLOCATION_FAILED;
     }
 

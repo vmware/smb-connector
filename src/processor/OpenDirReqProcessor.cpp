@@ -46,7 +46,7 @@ int OpenDirReqProcessor::process_get_structure_req()
     int ret = SmbClient::GetInstance()->OpenDir();
     if (ret != SMB_SUCCESS)
     {
-        DEBUG_LOG("OpenDirReqProcessor::process_get_structure_req, open as directory failed for %s", _url.c_str());
+        WARNING_LOG("OpenDirReqProcessor::process_get_structure_req, open as directory failed for %s", _url.c_str());
         int err = errno;
         if (err == ENOTDIR || err == EINVAL)
         {
@@ -55,7 +55,7 @@ int OpenDirReqProcessor::process_get_structure_req()
             ret = SmbClient::GetInstance()->OpenFile(O_RDONLY);
             if (ret != SMB_SUCCESS)
             {
-                DEBUG_LOG("OpenDirReqProcessor::process_get_structure_req open as file failed for %s", _url.c_str());
+                ERROR_LOG("OpenDirReqProcessor::process_get_structure_req open as file failed for %s", _url.c_str());
                 err = errno;
                 Packet *req = ALLOCATE(Packet);
                 _packet_creator->CreateStatusPacket(req, GET_STRUCTURE_ERROR_RESP, err, true);
@@ -164,7 +164,7 @@ int OpenDirReqProcessor::send_list_async()
             _sessionManager->PushResponse(req);
             if (_sessionManager->ProcessWriteEvent() != SMB_SUCCESS)
             {
-                DEBUG_LOG("OpenDirReqProcessor::send_list_async send failed, abprt now");
+                ERROR_LOG("OpenDirReqProcessor::send_list_async send failed, abprt now");
                 return SMB_ERROR;
             }
         }
@@ -217,7 +217,7 @@ int OpenDirReqProcessor::ProcessRequest(Packet *request)
     int ret = _packet_parser->ParsePacket(request);
     if (ret != SMB_SUCCESS)
     {
-        DEBUG_LOG("OpenDirReqProcessor::ProcessRequest invalid packet");
+        ERROR_LOG("OpenDirReqProcessor::ProcessRequest invalid packet");
         Packet *req = ALLOCATE(Packet);
         _packet_creator->CreateStatusPacket(req, GET_STRUCTURE_ERROR_RESP, ret);
         _sessionManager->PushResponse(req);

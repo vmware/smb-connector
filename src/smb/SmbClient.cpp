@@ -197,11 +197,17 @@ int SmbClient::Init()
 int SmbClient::CredentialsInit(std::string &server, std::string &workgroup, std::string &un, std::string &pass)
 {
     DEBUG_LOG("SmbClient::CredentialsInit");
-    DEBUG_LOG("%s %s %s", server.c_str(), workgroup.c_str(), un.c_str());
+    INFO_LOG("%s %s %s", server.c_str(), workgroup.c_str(), un.c_str());
     _server = server;
     _work_group = workgroup;
     _username = un;
     _password = pass;
+
+    if(_work_group.length() == 0)
+    {
+        _work_group = smbc_getWorkgroup(_ctx);
+        INFO_LOG("Empty workgroup, picked up from smb.conf file, new workgroup:%s", _work_group.c_str());
+    }
 
     return SMB_SUCCESS;
 }
@@ -229,7 +235,7 @@ int SmbClient::OpenDir()
 
     if (_file == NULL)
     {
-        DEBUG_LOG("SmbClient::OpenDir failed, lets try to fetch stats as file");
+        WARNING_LOG("SmbClient::OpenDir failed");
         return SMB_ERROR;
     }
 
@@ -249,7 +255,7 @@ struct file_info *SmbClient::GetNextFileInfo()
     DEBUG_LOG("SmbClient::GetNextFileInfo");
     if (_file == NULL)
     {
-        DEBUG_LOG("SmbClient::GetNextFileInfo try to get stats as file");
+        ERROR_LOG("SmbClient::GetNextFileInfo failed");
         return NULL;
     }
     return smbc_getFunctionReaddirPlus(_ctx)(_ctx, _file);
@@ -387,7 +393,7 @@ ssize_t SmbClient::Read(char *buffer, size_t len)
     assert(_file != NULL);
     if ((_end_offset - _read_bytes) < 0)
     {
-        ERROR_LOG("SmbClient::Read All bytes read");
+        DEBUG_LOG("SmbClient::Read All bytes read");
         return SMB_SUCCESS;
     }
     ret = smbc_getFunctionRead(_ctx)(_ctx, _file, buffer, len);
@@ -425,7 +431,7 @@ int SmbClient::Write(char *buffer, size_t len)
 
     if (_ctx == NULL || _file == NULL)
     {
-        DEBUG_LOG("SmbClient::Write, File already closed");
+        WARNING_LOG("SmbClient::Write, File already closed");
         return SMB_SUCCESS;
     }
 
@@ -473,7 +479,7 @@ int SmbClient::CloseFile()
  */
 int SmbClient::CreateDirectory()
 {
-    DEBUG_LOG("SmbClient::smb_mkdir");
+    DEBUG_LOG("SmbClient::CreateDirectory");
     std::string url = "smb://" + _server;
 
     int ret = smbc_getFunctionMkdir(_ctx)(_ctx, url.c_str(), S_IRWXU | S_IRWXG | S_IRWXO); //default mode

@@ -44,7 +44,7 @@ int DeleteProcessor::process_delete_req()
 
     if (ret != SMB_SUCCESS)
     {
-        DEBUG_LOG("DeleteProcessor::process_delete_req delete %s failed", _url.c_str());
+        ERROR_LOG("DeleteProcessor::process_delete_req delete %s failed", _url.c_str());
         ret = errno;
         Packet *resp = ALLOCATE(Packet);
         _packet_creator->CreateStatusPacket(resp, DELETE_ERROR_RESP, ret, true);

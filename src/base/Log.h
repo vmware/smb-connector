@@ -40,9 +40,13 @@ void generate_log_file_name();
 {if (logLevel >= LOG_LVL_ERROR)    Log(LOG_LVL_ERROR, __VA_ARGS__);} while (0)
 
 #define ALWAYS_LOG(...) do\
-{if (logLevel != LOG_LVL_NONE)     Log(LOG_LVL_ALWAYS, __VA_ARGS__);} while (0)
+{if (logLevel >= LOG_LVL_ALWAYS)     Log(LOG_LVL_ALWAYS, __VA_ARGS__);} while (0)
 
+#if defined(_DEBUG_)
 #define TRACE_LOG(...) do\
-{if (logLevel != LOG_LVL_NONE)     Log(LOG_LVL_TRACE, __VA_ARGS__);} while (0)
+{if (logLevel >= LOG_LVL_TRACE)     Log(LOG_LVL_TRACE, __VA_ARGS__);} while (0)
+#else
+#define TRACE_LOG(...)
+#endif
 
 #endif //LOG_H_

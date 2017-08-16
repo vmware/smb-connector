@@ -158,6 +158,13 @@ int UploadPacketParser::verify_request_id(Packet *packet)
     return IPacketParser::verify_request_id(packet);
 }
 
+/*!
+ * Parses packet for Upload request
+ * @param packet - incoming packet
+ * @return
+ *      SMB_SUCCESS - Successful
+ *      SMB_ERROR - Failed
+ */
 int UploadPacketParser::ParsePacket(Packet *packet)
 {
     DEBUG_LOG("UploadPacketParser::ParsePacket");

@@ -46,7 +46,7 @@ int IPacketCreator::CreateStatusPacket(Packet *packet, int cmd, int status_code,
 
     if (packet == NULL)
     {
-        DEBUG_LOG("IPacketCreator::CreateErrorPacket, null packet");
+        ERROR_LOG("IPacketCreator::CreateErrorPacket, null packet");
         return SMB_ERROR;
     }
 
@@ -56,7 +56,7 @@ int IPacketCreator::CreateStatusPacket(Packet *packet, int cmd, int status_code,
 
     if (!ALLOCATED(packet->_pb_msg) || !ALLOCATED(command) || !ALLOCATED(status))
     {
-        DEBUG_LOG("IPacketCreator::CreateErrorPacket, memory allocation failed");
+        ERROR_LOG("IPacketCreator::CreateErrorPacket, memory allocation failed");
         FREE(packet->_pb_msg);
         FREE(command);
         FREE(status);
@@ -85,13 +85,13 @@ int IPacketCreator::CreateStatusPacket(Packet *packet, int cmd, int status_code,
     packet->PutHeader();
     if (packet->PutData() != SMB_SUCCESS)
     {
-        DEBUG_LOG("IPacketCreator::CreateErrorPacket packet creation failed");
+        ERROR_LOG("IPacketCreator::CreateErrorPacket packet creation failed");
         FREE(packet->_pb_msg);
         return SMB_ERROR;
     }
     packet->Dump();
 
-    DEBUG_LOG("Error details: CMD:%d, err-code:%d, err-string: %s", cmd, status->code(), status->msg().c_str());
+    INFO_LOG("Error details: CMD:%d, err-code:%d, err-string: %s", cmd, status->code(), status->msg().c_str());
     return SMB_SUCCESS;
 }
 
@@ -111,7 +111,7 @@ int IPacketCreator::CreateCredentialPacket(Packet *obj)
     SmbDetails *smbDetails = ALLOCATE(SmbDetails);
     if (!ALLOCATED(smbDetails))
     {
-        DEBUG_LOG("IPacketCreator::CreateCredentialPacket memory allocation failed");
+        ERROR_LOG("IPacketCreator::CreateCredentialPacket memory allocation failed");
         return SMB_ALLOCATION_FAILED;
     }
     smbDetails->set_workgroup(RequestProcessor::GetInstance()->WorkGroup());

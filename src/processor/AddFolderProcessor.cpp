@@ -133,7 +133,7 @@ int AddFolderProcessor::ProcessRequest(Packet *packet)
     int ret = _packet_parser->ParsePacket(packet);
     if (ret != SMB_SUCCESS)
     {
-        DEBUG_LOG("AddFolderProcessor::ProcessRequest Parse Error, Send error");
+        ERROR_LOG("AddFolderProcessor::ProcessRequest Parse Error, Send error");
         Packet *resp = ALLOCATE(Packet);
         _packet_creator->CreateStatusPacket(resp, ADD_FOLDER_ERROR_RESP, ret);
         _sessionManager->PushResponse(resp);

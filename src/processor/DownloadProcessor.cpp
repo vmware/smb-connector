@@ -95,7 +95,7 @@ int DownloadProcessor::process_download_req_data()
     int ret = SmbClient::GetInstance()->SetOffset(_start_offset, _end_offset);
     if (ret != SMB_SUCCESS)
     {
-        DEBUG_LOG("DownloadProcessor::process_download_req_data failed");
+        ERROR_LOG("DownloadProcessor::process_download_req_data failed");
         int err = errno;
         Packet *resp = ALLOCATE(Packet);
         _packet_creator->CreateStatusPacket(resp, DOWNLOAD_ERROR, err, true);
@@ -186,7 +186,7 @@ int DownloadProcessor::download_file_async()
             if (ret == SMB_SUCCESS)
             {
                 static auto finish = std::chrono::high_resolution_clock::now();
-                DEBUG_LOG("Time took for Complete Download %ld milliseconds",
+                INFO_LOG("Time took for Complete Download %ld milliseconds",
                           std::chrono::duration_cast<milli>(finish - start).count());
                 INFO_LOG("DownloadProcessor::DownloadFileAsync Download successful Size %ld", sent_bytes);
                 Packet *resp = ALLOCATE(Packet);
@@ -194,7 +194,7 @@ int DownloadProcessor::download_file_async()
                 _sessionManager->PushResponse(resp);
                 if (_sessionManager->ProcessWriteEvent() != SMB_SUCCESS)
                 {
-                    DEBUG_LOG(
+                    WARNING_LOG(
                         "DownloadProcessor::download_file_async Download interrupted while sending end packet, bail out");
                 }
                 return SMB_SUCCESS;
@@ -202,7 +202,7 @@ int DownloadProcessor::download_file_async()
             else if (ret > 0)
             {
                 sent_bytes += ret;
-                DEBUG_LOG("DownloadProcessor::DownloadFileAsync received bytes: %ld from SmbClient-server", sent_bytes);
+                DEBUG_LOG("DownloadProcessor::DownloadFileAsync received bytes: %ld from Smb-server", sent_bytes);
                 char *tmp = data;
                 while (!_should_exit && ret != 0 && tmp != NULL)
                 {
@@ -222,7 +222,7 @@ int DownloadProcessor::download_file_async()
                     _sessionManager->PushResponse(resp);
                     if (_sessionManager->ProcessWriteEvent() != SMB_SUCCESS)
                     {
-                        DEBUG_LOG("DownloadProcessor::download_file_async Download interrupted, bail out");
+                        WARNING_LOG("DownloadProcessor::download_file_async Download interrupted, bail out");
                         return SMB_ERROR;
                     }
                     tmp += to_copy;
@@ -231,8 +231,8 @@ int DownloadProcessor::download_file_async()
             }
             else
             {
-                DEBUG_LOG("DownloadProcessor::DownloadFileAsync Download error");
-                DEBUG_LOG("DownloadProcessor::DownloadFileAsync SmbClient-server %s closed the connection",
+                ERROR_LOG("DownloadProcessor::DownloadFileAsync Download error");
+                ERROR_LOG("DownloadProcessor::DownloadFileAsync Smb-server %s closed the connection",
                           _url.c_str());
                 int err = errno;
                 Packet *resp = ALLOCATE(Packet);
@@ -240,7 +240,7 @@ int DownloadProcessor::download_file_async()
                 _sessionManager->PushResponse(resp);
                 if (_sessionManager->ProcessWriteEvent() != SMB_SUCCESS)
                 {
-                    DEBUG_LOG(
+                    WARNING_LOG(
                         "DownloadProcessor::download_file_async Download interrupted while fetching data, bail out");
                 }
                 return SMB_ERROR;
@@ -248,10 +248,10 @@ int DownloadProcessor::download_file_async()
         }
         else
         {
-            DEBUG_LOG("DownloadProcessor::download_file_async Buffer full, try to send some data and pause for a while");
+            INFO_LOG("DownloadProcessor::download_file_async Buffer full, try to send some data and pause for a while");
             if (_sessionManager->ProcessWriteEvent() != SMB_SUCCESS)
             {
-                DEBUG_LOG("Sending data failed, bail out");
+                ERROR_LOG("Sending data failed, bail out");
                 return SMB_ERROR;
             }
             sleep(1);
@@ -304,7 +304,7 @@ int DownloadProcessor::ProcessRequest(Packet *request)
     int ret = _packet_parser->ParsePacket(request);
     if (ret != SMB_SUCCESS)
     {
-        DEBUG_LOG("DownloadProcessor::ProcessRequest, invalid packet");
+        ERROR_LOG("DownloadProcessor::ProcessRequest, invalid packet");
         Packet *resp = ALLOCATE(Packet);
         _packet_creator->CreateStatusPacket(resp, DOWNLOAD_ERROR, ret);
         _sessionManager->PushResponse(resp);
@@ -331,7 +331,7 @@ int DownloadProcessor::ProcessRequest(Packet *request)
         case DOWNLOAD_END_RESP:
             ret = process_download_resp_end();
             static auto finish = std::chrono::high_resolution_clock::now();
-            DEBUG_LOG("Time took for Complete Download %ld milliseconds",
+            INFO_LOG("Time took for Complete Download %ld milliseconds",
                       std::chrono::duration_cast<milli>(finish - start).count());
             break;
         case DOWNLOAD_ERROR:

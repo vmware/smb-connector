@@ -91,7 +91,7 @@ void Server::Runloop()
         clock_gettime(CLOCK_REALTIME, &_end);
         if (timer_expired())
         {
-            DEBUG_LOG("Server::Runloop Idle timeout expired, going down");
+            INFO_LOG("Server::Runloop Idle timeout expired, going down");
             should_exit = 1;
             return;
         }
@@ -117,7 +117,7 @@ void Server::Runloop()
                         INFO_LOG("Got a connection");
                         if (_listen_sock->Accept(_client_sock) != SMB_SUCCESS)
                         {
-                            DEBUG_LOG("Accept failed");
+                            ERROR_LOG("Accept failed");
                         }
                         else
                         {
@@ -132,7 +132,7 @@ void Server::Runloop()
                         _listen_sock->Accept(tmp);
                         tmp->Close();
                         FREE(tmp);
-                        DEBUG_LOG("Already serving one client, Accept another client and close immediately");
+                        INFO_LOG("Already serving one client, Accept another client and close immediately");
                     }
                 }
                 else /* Client Socket */

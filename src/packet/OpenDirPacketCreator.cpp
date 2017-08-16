@@ -43,7 +43,7 @@ int OpenDirPacketCreator::create_get_structure_req(Packet *packet)
     OpenDirReqProcessor *_processor = dynamic_cast<OpenDirReqProcessor *>(RequestProcessor::GetInstance());
     if (IS_NULL(_processor))
     {
-        DEBUG_LOG("OpenDirPacketCreator::create_get_structure_req invalid RequestProcessor");
+        ERROR_LOG("OpenDirPacketCreator::create_get_structure_req invalid RequestProcessor");
         return SMB_ERROR;
     }
 
@@ -52,7 +52,7 @@ int OpenDirPacketCreator::create_get_structure_req(Packet *packet)
     FolderStructureRequest *f_req = ALLOCATE(FolderStructureRequest);
     if (!ALLOCATED(cmd) || !ALLOCATED(req) || !ALLOCATED(f_req))
     {
-        DEBUG_LOG("OpenDirPacketCreator::create_get_structure_req, memory allocation failed");
+        ERROR_LOG("OpenDirPacketCreator::create_get_structure_req, memory allocation failed");
         FREE(cmd);
         FREE(req);
         FREE(f_req);
@@ -76,7 +76,7 @@ int OpenDirPacketCreator::create_get_structure_req(Packet *packet)
     packet->PutHeader();
     if (packet->PutData() != SMB_SUCCESS)
     {
-        DEBUG_LOG("OpenDirPacketCreator::create_get_structure_req packet creation failed");
+        ERROR_LOG("OpenDirPacketCreator::create_get_structure_req packet creation failed");
         FREE(packet->_pb_msg); /*pb will take care of freeing up all resources contained in it */
         return SMB_ERROR;
     }
@@ -104,7 +104,7 @@ int OpenDirPacketCreator::create_get_structure_resp(Packet *packet)
     OpenDirReqProcessor *_processor = dynamic_cast<OpenDirReqProcessor *>(RequestProcessor::GetInstance());
     if (IS_NULL(_processor))
     {
-        DEBUG_LOG("OpenDirPacketCreator::create_get_structure_resp invalid RequestProcessor");
+        ERROR_LOG("OpenDirPacketCreator::create_get_structure_resp invalid RequestProcessor");
         return SMB_ERROR;
     }
 
@@ -116,7 +116,7 @@ int OpenDirPacketCreator::create_get_structure_resp(Packet *packet)
     FileInformation *f_info = NULL;
     if (!ALLOCATED(cmd) || !ALLOCATED(resp) || !ALLOCATED(f_resp))
     {
-        DEBUG_LOG("OpenDirPacketCreator::create_get_structure_resp, memory allocation failed");
+        ERROR_LOG("OpenDirPacketCreator::create_get_structure_resp, memory allocation failed");
         FREE(cmd);
         FREE(resp);
         FREE(f_resp);
@@ -131,7 +131,7 @@ int OpenDirPacketCreator::create_get_structure_resp(Packet *packet)
 
     if (!_processor->IsDirectory())
     {
-        DEBUG_LOG("Probably a file was passed");
+        INFO_LOG("Probably a file was passed");
         struct stat *st = _processor->GetStat();
         f_info = f_resp->add_fileinformation();
         f_info->set_name(_processor->Url().substr(_processor->Url().find_last_of('/') + 1, _processor->Url().length()));
@@ -212,7 +212,7 @@ int OpenDirPacketCreator::create_get_structure_resp(Packet *packet)
     packet->PutHeader();
     if (packet->PutData() != SMB_SUCCESS)
     {
-        DEBUG_LOG("OpenDirPacketCreator::create_get_structure_req packet creation failed");
+        ERROR_LOG("OpenDirPacketCreator::create_get_structure_req packet creation failed");
         FREE(packet->_pb_msg); /*pb will take care of freeing up all resources contained in it */
         return SMB_ERROR;
     }
@@ -244,14 +244,14 @@ int OpenDirPacketCreator::create_get_structure_end(Packet *packet)
     OpenDirReqProcessor *_processor = dynamic_cast<OpenDirReqProcessor *>(RequestProcessor::GetInstance());
     if (IS_NULL(_processor))
     {
-        DEBUG_LOG("OpenDirPacketCreator::create_get_structure_end invalid RequestProcessor");
+        ERROR_LOG("OpenDirPacketCreator::create_get_structure_end invalid RequestProcessor");
         return SMB_ERROR;
     }
 
     Command *cmd = ALLOCATE(Command);
     if (!ALLOCATED(cmd))
     {
-        DEBUG_LOG("OpenDirPacketCreator::create_get_structure_end, memory allocation failed");
+        ERROR_LOG("OpenDirPacketCreator::create_get_structure_end, memory allocation failed");
         FREE(packet->_pb_msg);
         return SMB_ALLOCATION_FAILED;
     }
@@ -264,7 +264,7 @@ int OpenDirPacketCreator::create_get_structure_end(Packet *packet)
     packet->PutHeader();
     if (packet->PutData() != SMB_SUCCESS)
     {
-        DEBUG_LOG("OpenDirPacketCreator::create_get_structure_end packet creation failed");
+        ERROR_LOG("OpenDirPacketCreator::create_get_structure_end packet creation failed");
         FREE(packet->_pb_msg); /*pb will take care of freeing up all resources contained in it */
         return SMB_ERROR;
     }
@@ -286,14 +286,14 @@ int OpenDirPacketCreator::CreatePacket(Packet *packet, int op_code, void *data)
     DEBUG_LOG("OpenDirPacketCreator::CreatePacket");
     if (packet == NULL)
     {
-        DEBUG_LOG("OpenDirPacketCreator::CreatePacket, NULL packet");
+        ERROR_LOG("OpenDirPacketCreator::CreatePacket, NULL packet");
         return SMB_ERROR;
     }
 
     packet->_pb_msg = ALLOCATE(Message);
     if (!ALLOCATED(packet->_pb_msg))
     {
-        DEBUG_LOG("OpenDirPacketCreator::CreatePacket, memory allocation failed");
+        ERROR_LOG("OpenDirPacketCreator::CreatePacket, memory allocation failed");
         return SMB_ALLOCATION_FAILED;
     }
 

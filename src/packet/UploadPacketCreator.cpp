@@ -42,14 +42,14 @@ int UploadPacketCreator::create_upload_req_init(Packet *packet)
     UploadProcessor *_processor = dynamic_cast<UploadProcessor *>(RequestProcessor::GetInstance());
     if (IS_NULL(_processor))
     {
-        DEBUG_LOG("UploadPacketCreator::create_upload_req_init invalid RequestProcessor");
+        ERROR_LOG("UploadPacketCreator::create_upload_req_init invalid RequestProcessor");
         return SMB_ERROR;
     }
 
     Command *cmd = ALLOCATE(Command);
     if (!ALLOCATED(cmd))
     {
-        DEBUG_LOG("UploadPacketCreator::create_upload_req_init, memory allocation failed");
+        ERROR_LOG("UploadPacketCreator::create_upload_req_init, memory allocation failed");
         FREE(packet->_pb_msg);
         return SMB_ALLOCATION_FAILED;
     }
@@ -62,7 +62,7 @@ int UploadPacketCreator::create_upload_req_init(Packet *packet)
     packet->PutHeader();
     if (packet->PutData() != SMB_SUCCESS)
     {
-        DEBUG_LOG("UploadPacketCreator::create_upload_req_init packet creation failed");
+        ERROR_LOG("UploadPacketCreator::create_upload_req_init packet creation failed");
         FREE(packet->_pb_msg); /*pb will take care of freeing up all resources contained in it */
         return SMB_ERROR;
     }
@@ -90,7 +90,7 @@ int UploadPacketCreator::create_upload_req_data(Packet *packet, packet_data *dat
     UploadProcessor *_processor = dynamic_cast<UploadProcessor *>(RequestProcessor::GetInstance());
     if (IS_NULL(_processor))
     {
-        DEBUG_LOG("UploadPacketCreator::create_upload_req_data invalid RequestProcessor");
+        ERROR_LOG("UploadPacketCreator::create_upload_req_data invalid RequestProcessor");
         return SMB_ERROR;
     }
 
@@ -100,7 +100,7 @@ int UploadPacketCreator::create_upload_req_data(Packet *packet, packet_data *dat
 
     if (!ALLOCATED(cmd) || !ALLOCATED(req) || !ALLOCATED(u_req))
     {
-        DEBUG_LOG("UploadPacketCreator::create_upload_req_data, memory allocation failed");
+        ERROR_LOG("UploadPacketCreator::create_upload_req_data, memory allocation failed");
         FREE(cmd);
         FREE(req);
         FREE(u_req);
@@ -119,7 +119,7 @@ int UploadPacketCreator::create_upload_req_data(Packet *packet, packet_data *dat
     packet->PutHeader();
     if (packet->PutData() != SMB_SUCCESS)
     {
-        DEBUG_LOG("UploadPacketCreator::create_upload_req_data packet creation failed");
+        ERROR_LOG("UploadPacketCreator::create_upload_req_data packet creation failed");
         FREE(packet->_pb_msg); /*pb will take care of freeing up all resources contained in it */
         return SMB_ERROR;
     }
@@ -144,14 +144,14 @@ int UploadPacketCreator::create_upload_req_end(Packet *packet)
     UploadProcessor *_processor = dynamic_cast<UploadProcessor *>(RequestProcessor::GetInstance());
     if (IS_NULL(_processor))
     {
-        DEBUG_LOG("UploadPacketCreator::create_upload_req_end invalid RequestProcessor");
+        ERROR_LOG("UploadPacketCreator::create_upload_req_end invalid RequestProcessor");
         return SMB_ERROR;
     }
 
     Command *cmd = ALLOCATE(Command);
     if (!ALLOCATED(cmd))
     {
-        DEBUG_LOG("UploadPacketCreator::create_upload_req_end, memory allocation failed");
+        ERROR_LOG("UploadPacketCreator::create_upload_req_end, memory allocation failed");
         FREE(packet->_pb_msg);
         return SMB_ALLOCATION_FAILED;
     }
@@ -164,7 +164,7 @@ int UploadPacketCreator::create_upload_req_end(Packet *packet)
     packet->PutHeader();
     if (packet->PutData() != SMB_SUCCESS)
     {
-        DEBUG_LOG("UploadPacketCreator::create_upload_req_end packet creation failed");
+        ERROR_LOG("UploadPacketCreator::create_upload_req_end packet creation failed");
         FREE(packet->_pb_msg); /*pb will take care of freeing up all resources contained in it */
         return SMB_ERROR;
     }
@@ -187,14 +187,14 @@ int UploadPacketCreator::CreatePacket(Packet *packet, int op_code, void *data)
     DEBUG_LOG("UploadPacketCreator::CreatePacket");
     if (packet == NULL)
     {
-        DEBUG_LOG("UploadPacketCreator::CreatePacket, NULL packet");
+        ERROR_LOG("UploadPacketCreator::CreatePacket, NULL packet");
         return SMB_ERROR;
     }
 
     packet->_pb_msg = ALLOCATE(Message);
     if (!ALLOCATED(packet->_pb_msg))
     {
-        DEBUG_LOG("UploadPacketCreator::CreatePacket, memory allocation failed");
+        ERROR_LOG("UploadPacketCreator::CreatePacket, memory allocation failed");
         return SMB_ALLOCATION_FAILED;
     }
 
@@ -206,7 +206,7 @@ int UploadPacketCreator::CreatePacket(Packet *packet, int op_code, void *data)
         {
             if (data == NULL)
             {
-                DEBUG_LOG("UploadPacketCreator::CreatePacket, data missing for UPLOAD_REQ_DATA");
+                ERROR_LOG("UploadPacketCreator::CreatePacket, data missing for UPLOAD_REQ_DATA");
                 return SMB_ERROR;
             }
             return create_upload_req_data(packet, static_cast<packet_data *>(data));
@@ -214,8 +214,8 @@ int UploadPacketCreator::CreatePacket(Packet *packet, int op_code, void *data)
         case UPLOAD_END_REQ:
             return create_upload_req_end(packet);
         default:
-            FREE(packet->_pb_msg);
             ERROR_LOG("Invalid op_code");
+            FREE(packet->_pb_msg);
             break;
     }
 

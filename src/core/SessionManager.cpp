@@ -74,7 +74,7 @@ int SessionManager::process_request()
             TRACE_LOG("SessionManager::process_request ProcessPacket %p", packet);
             if (packet->ParseProtoBuffer() != SMB_SUCCESS)
             {
-                DEBUG_LOG("SessionManager::process_request Parse failed");
+                ERROR_LOG("SessionManager::process_request Parse failed");
                 FREE(packet);
                 _reader_lock.unlock();
                 break;
@@ -83,7 +83,7 @@ int SessionManager::process_request()
             /* Initialise Processor */
             if (RequestProcessor::GetInstance() == NULL && InitProcessor(packet) != SMB_SUCCESS)
             {
-                DEBUG_LOG("Received invalid first packet, closing the connection");
+                ERROR_LOG("Received invalid first packet, closing the connection");
                 FREE(packet);
                 _reader_lock.unlock();
                 break;
@@ -92,7 +92,7 @@ int SessionManager::process_request()
             /* Process Packet */
             if (RequestProcessor::GetInstance()->ProcessRequest(packet) != SMB_SUCCESS)
             {
-                DEBUG_LOG("SessionManager::process_request Process Packet failed");
+                ERROR_LOG("SessionManager::process_request Process Packet failed");
                 FREE(packet);
                 _reader_lock.unlock();
                 break;
@@ -101,7 +101,7 @@ int SessionManager::process_request()
             FREE(packet);
         }
     }
-    DEBUG_LOG("SessionManager::process_request exiting");
+    INFO_LOG("SessionManager::process_request exiting");
     return SMB_SUCCESS;
 }
 
@@ -186,7 +186,7 @@ int SessionManager::InitProcessor(Packet *packet)
 
     if (!ALLOCATED(RequestProcessor::GetInstance()))
     {
-        DEBUG_LOG("SessionManager::InitialiseProcessor, processor allocation failed");
+        ERROR_LOG("SessionManager::InitialiseProcessor, processor allocation failed");
         return SMB_ALLOCATION_FAILED;
     }
     RequestProcessor::GetInstance()->SetSessionManager(this);
@@ -228,7 +228,7 @@ int SessionManager::ProcessReadEvent()
             request->_data = ALLOCATE_ARR(char, request->GetLength());
             if (!ALLOCATED(request->_data))
             {
-                DEBUG_LOG("SessionManager::ProcessReadEvent, memory allocation failed");
+                ERROR_LOG("SessionManager::ProcessReadEvent, memory allocation failed");
                 return SMB_ALLOCATION_FAILED;
             }
             _sock->Read(buffer, HEADER_SIZE);
@@ -277,7 +277,7 @@ int SessionManager::ProcessWriteEvent()
     TRACE_LOG("Got a write event");
     if (!_write_mtx.try_lock())
     {
-        DEBUG_LOG("Data already being sent");
+        DEBUG_LOG("SessionManager::ProcessWriteEvent Data already being sent");
         return SMB_SUCCESS;
     }
     while (!should_exit)
@@ -286,7 +286,7 @@ int SessionManager::ProcessWriteEvent()
         Packet *res = PopResponse();
         if (res)
         {
-            DEBUG_LOG("Sending data");
+            DEBUG_LOG("SessionManager::ProcessWriteEvent Sending data");
             if (!res->_hdr_sent)
             {
                 sent = _sock->Send(res->_header + res->_p_len, HEADER_SIZE);
@@ -305,7 +305,7 @@ int SessionManager::ProcessWriteEvent()
                 }
                 if (sent == HEADER_SIZE)
                 {
-                    DEBUG_LOG("Header sent");
+                    DEBUG_LOG("SessionManager::ProcessWriteEvent Header sent");
                     res->_hdr_sent = true;
                     res->_p_len += HEADER_SIZE;
                 }
@@ -344,14 +344,14 @@ int SessionManager::ProcessWriteEvent()
             }
             else
             {
-                DEBUG_LOG("Data not completely send, add to queue again");
+                DEBUG_LOG("SessionManager::ProcessWriteEvent Data not completely send, add to queue again");
                 PushResponseAgain(res);
                 break;
             }
         }
         else
         {
-            TRACE_LOG("No data available for writing");
+            TRACE_LOG("SessionManager::ProcessWriteEvent No data available for writing");
             break;
         }
     }
@@ -422,7 +422,7 @@ Packet *SessionManager::PopResponse()
     std::lock_guard<std::mutex> scoped_lock(_res_queue_mtx);
     if (_res_queue.empty())
     {
-        TRACE_LOG("Empty response queue");
+        TRACE_LOG("SessionManager::PopResponse Empty queue");
         return NULL;
     }
     Packet *res = _res_queue.front();
@@ -490,7 +490,7 @@ Packet *SessionManager::PopRequest()
         _req_queue.pop_front();
         return res;
     }
-    TRACE_LOG("Empty request queue");
+    TRACE_LOG("SessionManager::PopRequest Empty queue");
     return NULL;
 
 }
@@ -517,7 +517,7 @@ Packet *SessionManager::GetLastRequest()
         Packet *res = _req_queue.back();
         return res;
     }
-    TRACE_LOG("Empty request queue");
+    TRACE_LOG("SessionManager::GetLastRequest Empty queue");
     return NULL;
 }
 

@@ -42,14 +42,14 @@ int TestConnectionPacketCreator::create_test_connection_req(Packet *packet)
     TestConnection *_processor = dynamic_cast<TestConnection *>(RequestProcessor::GetInstance());
     if (IS_NULL(_processor))
     {
-        DEBUG_LOG("TestConnectionPacketCreator::create_test_connection_req invalid RequestProcessor");
+        ERROR_LOG("TestConnectionPacketCreator::create_test_connection_req invalid RequestProcessor");
         return SMB_ERROR;
     }
 
     Command *cmd = ALLOCATE(Command);
     if (!ALLOCATED(cmd))
     {
-        DEBUG_LOG("TestConnectionPacketCreator::create_test_connection_req, memory allocation failed");
+        ERROR_LOG("TestConnectionPacketCreator::create_test_connection_req, memory allocation failed");
         FREE(packet->_pb_msg);
         return SMB_ALLOCATION_FAILED;
     }
@@ -62,7 +62,7 @@ int TestConnectionPacketCreator::create_test_connection_req(Packet *packet)
     packet->PutHeader();
     if (packet->PutData() != SMB_SUCCESS)
     {
-        DEBUG_LOG("TestConnectionPacketCreator::create_test_connection_req packet creation failed");
+        ERROR_LOG("TestConnectionPacketCreator::create_test_connection_req packet creation failed");
         FREE(packet->_pb_msg); /*pb will take care of freeing up all resources contained in it */
         return SMB_ERROR;
     }
@@ -86,7 +86,7 @@ int TestConnectionPacketCreator::create_test_connection_resp(Packet *packet)
     TestConnection *_processor = dynamic_cast<TestConnection *>(RequestProcessor::GetInstance());
     if (IS_NULL(_processor))
     {
-        DEBUG_LOG("TestConnectionPacketCreator::create_test_connection_resp invalid RequestProcessor");
+        ERROR_LOG("TestConnectionPacketCreator::create_test_connection_resp invalid RequestProcessor");
         return SMB_ERROR;
     }
 
@@ -96,7 +96,7 @@ int TestConnectionPacketCreator::create_test_connection_resp(Packet *packet)
     FileInformation *f_info = ALLOCATE(FileInformation);
     if (!ALLOCATED(cmd) || !ALLOCATED(resp) || !ALLOCATED(t_resp) || !ALLOCATED(f_info))
     {
-        DEBUG_LOG("TestConnectionPacketCreator::create_test_connection_resp, memory allocation failed");
+        ERROR_LOG("TestConnectionPacketCreator::create_test_connection_resp, memory allocation failed");
         FREE(cmd);
         FREE(resp);
         FREE(t_resp);
@@ -147,7 +147,7 @@ int TestConnectionPacketCreator::create_test_connection_resp(Packet *packet)
     packet->PutHeader();
     if (packet->PutData() != SMB_SUCCESS)
     {
-        DEBUG_LOG("TestConnectionPacketCreator::create_test_connection_resp packet creation failed");
+        ERROR_LOG("TestConnectionPacketCreator::create_test_connection_resp packet creation failed");
         FREE(packet->_pb_msg); /*pb will take care of freeing up all resources contained in it */
         return SMB_ERROR;
     }
@@ -170,14 +170,14 @@ int TestConnectionPacketCreator::CreatePacket(Packet *packet, int op_code, void 
     DEBUG_LOG("TestConnectionPacketCreator::CreatePacket");
     if (packet == NULL)
     {
-        DEBUG_LOG("TestConnectionPacketCreator::CreatePacket, NULL packet");
+        ERROR_LOG("TestConnectionPacketCreator::CreatePacket, NULL packet");
         return SMB_ERROR;
     }
 
     packet->_pb_msg = ALLOCATE(Message);
     if (!ALLOCATED(packet->_pb_msg))
     {
-        DEBUG_LOG("TestConnectionPacketCreator::CreatePacket, memory allocation failed");
+        ERROR_LOG("TestConnectionPacketCreator::CreatePacket, memory allocation failed");
         return SMB_ALLOCATION_FAILED;
     }
 
@@ -188,8 +188,8 @@ int TestConnectionPacketCreator::CreatePacket(Packet *packet, int op_code, void 
         case TEST_CONNECTION_INIT_RESP:
             return create_test_connection_resp(packet);
         default:
-            FREE(packet->_pb_msg);
             ERROR_LOG("invalid op_code");
+            FREE(packet->_pb_msg);
             break;
     }
     return SMB_ERROR;

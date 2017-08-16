@@ -42,14 +42,14 @@ int DownloadPacketCreator::create_download_req_init(Packet *packet)
     DownloadProcessor *_processor = dynamic_cast<DownloadProcessor *>(RequestProcessor::GetInstance());
     if (IS_NULL(_processor))
     {
-        DEBUG_LOG("DownloadPacketCreator::create_download_req_init invalid RequestProcessor");
+        ERROR_LOG("DownloadPacketCreator::create_download_req_init invalid RequestProcessor");
         return SMB_ERROR;
     }
 
     Command *cmd = ALLOCATE(Command);
     if (!ALLOCATED(cmd))
     {
-        DEBUG_LOG("DownloadPacketCreator::create_download_req_init, memory allocation failed");
+        ERROR_LOG("DownloadPacketCreator::create_download_req_init, memory allocation failed");
         FREE(packet->_pb_msg);
         return SMB_ALLOCATION_FAILED;
     }
@@ -62,7 +62,7 @@ int DownloadPacketCreator::create_download_req_init(Packet *packet)
     packet->PutHeader();
     if (packet->PutData() != SMB_SUCCESS)
     {
-        DEBUG_LOG("DownloadPacketCreator::create_download_req_init packet creation failed");
+        ERROR_LOG("DownloadPacketCreator::create_download_req_init packet creation failed");
         FREE(packet->_pb_msg); /*pb will take care of freeing up all resources contained in it */
         return SMB_ERROR;
     }
@@ -89,7 +89,7 @@ int DownloadPacketCreator::create_download_req_init_resp(Packet *packet)
     DownloadProcessor *_processor = dynamic_cast<DownloadProcessor *>(RequestProcessor::GetInstance());
     if (IS_NULL(_processor))
     {
-        DEBUG_LOG("DownloadPacketCreator::create_download_req_init_resp invalid RequestProcessor");
+        ERROR_LOG("DownloadPacketCreator::create_download_req_init_resp invalid RequestProcessor");
         return SMB_ERROR;
     }
 
@@ -99,7 +99,7 @@ int DownloadPacketCreator::create_download_req_init_resp(Packet *packet)
     FileInformation *fInfo = ALLOCATE(FileInformation);
     if (!ALLOCATED(cmd) || !ALLOCATED(resp) || !ALLOCATED(dResp) || !ALLOCATED(fInfo))
     {
-        DEBUG_LOG("DownloadPacketCreator::create_download_req_init_resp, memory allocation failed");
+        ERROR_LOG("DownloadPacketCreator::create_download_req_init_resp, memory allocation failed");
         FREE(cmd);
         FREE(resp);
         FREE(dResp);
@@ -129,7 +129,7 @@ int DownloadPacketCreator::create_download_req_init_resp(Packet *packet)
     packet->PutHeader();
     if (packet->PutData() != SMB_SUCCESS)
     {
-        DEBUG_LOG("DownloadPacketCreator::create_download_req_init_resp packet creation failed");
+        ERROR_LOG("DownloadPacketCreator::create_download_req_init_resp packet creation failed");
         FREE(packet->_pb_msg); /*pb will take care of freeing up all resources contained in it */
         return SMB_ERROR;
     }
@@ -155,7 +155,7 @@ int DownloadPacketCreator::create_download_req_data(Packet *packet, packet_data 
     DownloadProcessor *_processor = dynamic_cast<DownloadProcessor *>(RequestProcessor::GetInstance());
     if (IS_NULL(_processor))
     {
-        DEBUG_LOG("DownloadPacketCreator::create_download_req_data invalid RequestProcessor");
+        ERROR_LOG("DownloadPacketCreator::create_download_req_data invalid RequestProcessor");
         return SMB_ERROR;
     }
 
@@ -164,7 +164,7 @@ int DownloadPacketCreator::create_download_req_data(Packet *packet, packet_data 
     RangeDownloadRequest *download_req = ALLOCATE(RangeDownloadRequest);
     if (!ALLOCATED(cmd) || !ALLOCATED(req) || !ALLOCATED(download_req))
     {
-        DEBUG_LOG("DownloadPacketCreator::create_download_req_data, memory allocation failed");
+        ERROR_LOG("DownloadPacketCreator::create_download_req_data, memory allocation failed");
         FREE(cmd);
         FREE(req);
         FREE(download_req);
@@ -187,7 +187,7 @@ int DownloadPacketCreator::create_download_req_data(Packet *packet, packet_data 
     packet->PutHeader();
     if (packet->PutData() != SMB_SUCCESS)
     {
-        DEBUG_LOG("DownloadPacketCreator::create_download_req_init_resp packet creation failed");
+        ERROR_LOG("DownloadPacketCreator::create_download_req_init_resp packet creation failed");
         FREE(packet->_pb_msg); /*pb will take care of freeing up all resources contained in it */
         return SMB_ERROR;
     }
@@ -217,7 +217,7 @@ int DownloadPacketCreator::create_download_resp_data(Packet *packet, packet_data
     DownloadProcessor *_processor = dynamic_cast<DownloadProcessor *>(RequestProcessor::GetInstance());
     if (IS_NULL(_processor))
     {
-        DEBUG_LOG("DownloadPacketCreator::create_download_resp_data invalid RequestProcessor");
+        ERROR_LOG("DownloadPacketCreator::create_download_resp_data invalid RequestProcessor");
         return SMB_ERROR;
     }
 
@@ -226,7 +226,7 @@ int DownloadPacketCreator::create_download_resp_data(Packet *packet, packet_data
     DownloadDataResponse *d_resp = ALLOCATE(DownloadDataResponse);
     if (!ALLOCATED(cmd) || !ALLOCATED(resp) || !ALLOCATED(d_resp))
     {
-        DEBUG_LOG("DownloadPacketCreator::create_download_resp_data, memory allocation failed");
+        ERROR_LOG("DownloadPacketCreator::create_download_resp_data, memory allocation failed");
         FREE(cmd);
         FREE(resp);
         FREE(d_resp);
@@ -247,7 +247,7 @@ int DownloadPacketCreator::create_download_resp_data(Packet *packet, packet_data
     packet->PutHeader();
     if (packet->PutData() != SMB_SUCCESS)
     {
-        DEBUG_LOG("DownloadPacketCreator::create_download_resp_data packet creation failed");
+        ERROR_LOG("DownloadPacketCreator::create_download_resp_data packet creation failed");
         FREE(packet->_pb_msg); /*pb will take care of freeing up all resources contained in it */
         return SMB_ERROR;
     }
@@ -274,7 +274,7 @@ int DownloadPacketCreator::create_download_resp_end(Packet *packet)
     DownloadProcessor *_processor = dynamic_cast<DownloadProcessor *>(RequestProcessor::GetInstance());
     if (IS_NULL(_processor))
     {
-        DEBUG_LOG("DownloadPacketCreator::create_download_resp_end invalid RequestProcessor");
+        ERROR_LOG("DownloadPacketCreator::create_download_resp_end invalid RequestProcessor");
         return SMB_ERROR;
     }
 
@@ -282,7 +282,7 @@ int DownloadPacketCreator::create_download_resp_end(Packet *packet)
     Command *cmd = ALLOCATE(Command);
     if (!ALLOCATED(cmd))
     {
-        DEBUG_LOG("DownloadPacketCreator::create_download_resp_data, memory allocation failed");
+        ERROR_LOG("DownloadPacketCreator::create_download_resp_data, memory allocation failed");
         FREE(cmd);
         FREE(packet->_pb_msg);
         return SMB_ALLOCATION_FAILED;
@@ -294,7 +294,7 @@ int DownloadPacketCreator::create_download_resp_end(Packet *packet)
     packet->PutHeader();
     if (packet->PutData() != SMB_SUCCESS)
     {
-        DEBUG_LOG("DownloadPacketCreator::create_download_resp_end packet creation failed");
+        ERROR_LOG("DownloadPacketCreator::create_download_resp_end packet creation failed");
         FREE(packet->_pb_msg); /*pb will take care of freeing up all resources contained in it */
         return SMB_ERROR;
     }
@@ -317,14 +317,14 @@ int DownloadPacketCreator::CreatePacket(Packet *packet, int op_code, void *data)
     DEBUG_LOG("DownloadPacketCreator::CreatePacket");
     if (packet == NULL)
     {
-        DEBUG_LOG("DownloadPacketCreator::CreatePacket, NULL packet");
+        ERROR_LOG("DownloadPacketCreator::CreatePacket, NULL packet");
         return SMB_ERROR;
     }
 
     packet->_pb_msg = ALLOCATE(Message);
     if (!ALLOCATED(packet->_pb_msg))
     {
-        DEBUG_LOG("DownloadPacketCreator::CreatePacket, memory allocation failed");
+        ERROR_LOG("DownloadPacketCreator::CreatePacket, memory allocation failed");
         return SMB_ALLOCATION_FAILED;
     }
 
@@ -337,14 +337,14 @@ int DownloadPacketCreator::CreatePacket(Packet *packet, int op_code, void *data)
         case DOWNLOAD_DATA_REQ:
             if (data == NULL)
             {
-                DEBUG_LOG("DownloadPacketCreator::CreatePacket, data missing for DOWNLOAD_DATA_REQ");
+                ERROR_LOG("DownloadPacketCreator::CreatePacket, data missing for DOWNLOAD_DATA_REQ");
                 return SMB_ERROR;
             }
             return create_download_req_data(packet, static_cast<packet_data *>(data));
         case DOWNLOAD_DATA_RESP:
             if (data == NULL)
             {
-                DEBUG_LOG("DownloadPacketCreator::CreatePacket, data missing for DOWNLOAD_DATA_RESP");
+                ERROR_LOG("DownloadPacketCreator::CreatePacket, data missing for DOWNLOAD_DATA_RESP");
                 return SMB_ERROR;
             }
             return create_download_resp_data(packet, static_cast<packet_data *>(data));

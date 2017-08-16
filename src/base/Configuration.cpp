@@ -83,7 +83,7 @@ void Configuration::DumpTable()
 
     for (iter = _table.begin(); iter != _table.end(); ++iter)
     {
-        DEBUG_LOG("configuation:%s=%s", iter->first.c_str(), iter->second.c_str());
+        INFO_LOG("configuation:%s=%s", iter->first.c_str(), iter->second.c_str());
     }
 }
 
@@ -135,6 +135,7 @@ int Configuration::Parse()
 
     if(!conf_file.good())
     {
+        ERROR_LOG("Configuration::Parse invalid configuration file, Kindly check if smb-connector.conf exists");
         return SMB_ERROR;
     }
 
