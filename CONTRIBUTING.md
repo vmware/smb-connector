@@ -6,9 +6,8 @@ The smb-connector project team welcomes contributions from the community. If you
 signed our contributor license agreement (CLA), our bot will update the issue when you open a Pull Request. For any
 questions about the CLA process, please refer to our [FAQ](https://cla.vmware.com/faq).
 
-## Community
-
 ## Getting Started
+Follow instructions in README.md to build this project and Samba.
 
 ## Contribution Flow
 
@@ -66,8 +65,6 @@ git push --force-with-lease origin my-new-feature
 Be sure to add a comment to the PR indicating your new changes are ready to review, as GitHub does not generate a
 notification when you git push.
 
-### Code Style
-
 ### Formatting Commit Messages
 
 We follow the conventions on [How to Write a Git Commit Message](http://chris.beams.io/posts/git-commit/).
@@ -81,3 +78,4 @@ and commits.
 When opening a new issue, try to roughly follow the commit message format conventions above.
 
 ## Repository Structure
+Repository structure can be found in README.md file
