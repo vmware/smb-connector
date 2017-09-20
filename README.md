@@ -69,8 +69,8 @@ SMB-Connector uses gtest (google testing framework) for executing unit-tests
 A local samba server needs to be setup
 
 Steps to setup a local Samba server for unit-test
-    1. Install Samba (yum install samba)
-    2. Add a 'test' user (useradd -m test)
-    3. Set the password for the 'test', the password should be 'test' (passwd test)
-    4. Add it as samba user (smbpasswd -a test)
-    5. Allow samba through SELinux (sudo setsebool -P samba_export_all_rw on)
+    * Install Samba (yum install samba)
+    * Add a 'test' user (useradd -m test)
+    * Set the password for the 'test', the password should be 'test' (passwd test)
+    * Add it as samba user (smbpasswd -a test)
+    * Allow samba through SELinux (sudo setsebool -P samba_export_all_rw on)
