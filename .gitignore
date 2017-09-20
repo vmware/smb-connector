@@ -4,15 +4,10 @@
 **/**/*.o
 **/**/*.d
 bin
-.first-debug-build
-.first-rel-build
-jni/include/libsmbclient.h
 lib
 cmake-build-debug/
 cmake-build-release/
 cmake-build-relwithdebinfo/
-.scannerwork/**
-bw_output/**
 gcov_report/**
 doc/**
 unit_test_report.xml
