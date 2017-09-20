@@ -90,7 +90,7 @@ int Packet::PutData()
         ERROR_LOG("Packet::PutData, memory allocation failed");
         return SMB_ERROR;
     }
-    INFO_LOG("Message Length %ld", _pb_msg->SerializeAsString().length());
+    DEBUG_LOG("Message Length %ld", _pb_msg->SerializeAsString().length());
     memcpy(_data, _pb_msg->SerializeAsString().data(), _pb_msg->SerializeAsString().size());
     return SMB_SUCCESS;
 }

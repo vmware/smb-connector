@@ -34,4 +34,4 @@ ln -s libsmbclient.so.0.2.3 libsmbclient.so
 cd ../..
 ./del_unused_lib.sh cmake-build-debug/lib
 ./generate_proto_buf.sh
-build-wrapper-linux-x86-64 --out-dir bw_output ./cmake_debug.sh
+./cmake_debug.sh

@@ -291,7 +291,7 @@ int UnixDomainSocket::Read(char *buffer, int maxlen)
         {
             if (errno == ECONNRESET || errno == ETIMEDOUT)
             {
-                INFO_LOG("Read returns %ld, errno=%d (%s)", ret, errno, strerror(errno));
+                DEBUG_LOG("Read returns %ld, errno=%d (%s)", ret, errno, strerror(errno));
                 return SMB_RESET;
             }
             else
@@ -307,7 +307,7 @@ int UnixDomainSocket::Read(char *buffer, int maxlen)
         return SMB_EOF;
     }
 
-    INFO_LOG("Received %ld bytes", ret);
+    DEBUG_LOG("Received %ld bytes", ret);
     return static_cast<int>(ret);
 }
 
@@ -338,7 +338,7 @@ int UnixDomainSocket::Send(const char *buffer, int len)
         }
     }
 
-    INFO_LOG("UnixDomainSocket %ld bytes sent", ret);
+    DEBUG_LOG("UnixDomainSocket %ld bytes sent", ret);
     return static_cast<int>(ret);
 }
 
@@ -357,7 +357,7 @@ int UnixDomainSocket::Peek(char *buffer, int maxlen)
         {
             if (errno == ECONNRESET || errno == ETIMEDOUT)
             {
-                INFO_LOG("peek recv returns %ld, errno=%d (%s)", ret, errno, strerror(errno));
+                DEBUG_LOG("peek recv returns %ld, errno=%d (%s)", ret, errno, strerror(errno));
                 return SMB_RESET;
             }
             else

@@ -315,6 +315,13 @@ int main(int argc, char *argv[])
     signal(SIGSEGV, static_cast<__sighandler_t>(segv_handler));
 #endif
 
+    if(argc < 2)
+    {
+        print_help();
+        exit(1);
+    }
+
+
     logger = ALLOCATE(Log4Cpp);
     if (!ALLOCATED(logger))
     {

@@ -92,9 +92,10 @@ int SessionManager::process_request()
             /* Process Packet */
             if (RequestProcessor::GetInstance()->ProcessRequest(packet) != SMB_SUCCESS)
             {
-                ERROR_LOG("SessionManager::process_request Process Packet failed");
+                ERROR_LOG("SessionManager::process_request Process Packet failed, closing connection");
                 FREE(packet);
                 _reader_lock.unlock();
+                _smbConnector->CleanUp();
                 break;
             }
 

@@ -33,10 +33,15 @@ The directory structure is
     |- unit-tests          - unit test code
 ```
 
-Fetch Samba code
+Fetch Samba code and apply patch for new APIs
 ----------------
-Download modified samba code (version 4.6.6) from "add vmware github repo link here".
-Extract the same as samba folder in root folder of the project
+Download samba code (version 4.6.6) from [here](https://download.samba.org/pub/samba/stable/samba-4.6.6.tar.gz).
+
+Extract the same as samba folder in root folder of the project.
+
+Copy readdir-plus-set-config-set-log-callback.patch file in samba folder.
+
+Apply readdir-plus-set-config-set-log-callback.patch to samba code (git apply readdir-plus-set-config-set-log-callback.patch).
 
 Build Instructions
 --------------------
