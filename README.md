@@ -5,8 +5,7 @@ SMB-Connector - C++ connector implementation around libsmbclient
 Overview
 ---------
 
-SMB-Connector is a c++ connector around libsmbclient (samba.org).
-It uses google's protocol buffers message for communication.
+SMB-Connector provides protobuf based communication mechanism on top of libsmbclient APIs which can be used by gateway to serve multiple clients in parallel. Its easy to integrate SMB-Connector with most of programming language since its the protobuf library can generate data access classes for most of the well know programming languages.
 
 Supported OS Versions
 ----------------------
