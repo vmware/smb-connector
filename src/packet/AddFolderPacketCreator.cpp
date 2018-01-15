@@ -113,8 +113,8 @@ int AddFolderPacketCreator::create_add_folder_resp(Packet *packet)
 
     assert(ptr != NULL);
 
-    fInfo->set_createtime(ptr->st_ctim.tv_sec);
-    fInfo->set_modifiedtime(ptr->st_mtim.tv_sec);
+    fInfo->set_createtime(ptr->st_ctim.tv_sec*1e3 + ptr->st_ctim.tv_nsec*1e-6 );
+    fInfo->set_modifiedtime(ptr->st_mtim.tv_sec*1e3 + ptr->st_mtim.tv_nsec*1e-6);
 
     addResp->set_allocated_fileinformation(fInfo);
     resp->set_allocated_addfolderresponse(addResp);

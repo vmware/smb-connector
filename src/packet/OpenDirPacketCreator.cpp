@@ -137,7 +137,7 @@ int OpenDirPacketCreator::create_get_structure_resp(Packet *packet)
         f_info->set_name(_processor->Url().substr(_processor->Url().find_last_of('/') + 1, _processor->Url().length()));
         f_info->set_isdirectory(false);
         f_info->set_size(st->st_size);
-        f_info->set_modifiedtime(st->st_mtim.tv_sec);
+        f_info->set_modifiedtime(st->st_mtim.tv_sec*1e3 + st->st_mtim.tv_nsec*1e-6);
     }
     else
     {
@@ -165,8 +165,8 @@ int OpenDirPacketCreator::create_get_structure_resp(Packet *packet)
                     f_info->set_isdirectory(ptr->mode & FILE_ATTRIBUTE_DIRECTORY);
                     f_info->set_resourcetype(ptr->mode);
                     f_info->set_size(ptr->size);
-                    f_info->set_createtime(ptr->crtime_ts.tv_sec);
-                    f_info->set_modifiedtime(ptr->mtime_ts.tv_sec);
+                    f_info->set_createtime(ptr->crtime_ts.tv_sec*1e3 + ptr->crtime_ts.tv_nsec*1e-6);
+                    f_info->set_modifiedtime(ptr->mtime_ts.tv_sec*1e3 + ptr->mtime_ts.tv_nsec*1e-6);
                 }
                 else if (i > 0)
                 {
