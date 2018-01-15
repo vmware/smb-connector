@@ -116,8 +116,8 @@ int TestConnectionPacketCreator::create_test_connection_resp(Packet *packet)
             _processor->Url().substr(_processor->Url().find_last_of('/') + 1, _processor->Url().length()));
         f_info->set_isdirectory(ptr->mode & FILE_ATTRIBUTE_DIRECTORY);
         f_info->set_size(ptr->size);
-        f_info->set_createtime(ptr->crtime_ts.tv_sec*1e3 + ptr->crtime_ts.tv_nsec*1e-6);
-        f_info->set_modifiedtime(ptr->mtime_ts.tv_sec*1e3 + ptr->mtime_ts.tv_nsec*1e-6);
+        f_info->set_createtime(ptr->crtime_ts.tv_sec*SEC_TO_MS + ptr->crtime_ts.tv_nsec*NANO_TO_MS);
+        f_info->set_modifiedtime(ptr->mtime_ts.tv_sec*SEC_TO_MS + ptr->mtime_ts.tv_nsec*NANO_TO_MS);
     }
     else if (st)
     {
@@ -125,8 +125,8 @@ int TestConnectionPacketCreator::create_test_connection_resp(Packet *packet)
             _processor->Url().substr(_processor->Url().find_last_of('/') + 1, _processor->Url().length()));
         f_info->set_isdirectory(st->st_mode & FILE_ATTRIBUTE_DIRECTORY);
         f_info->set_size(st->st_size);
-        f_info->set_createtime(st->st_ctim.tv_sec*1e3 + st->st_ctim.tv_nsec*1e-6);
-        f_info->set_modifiedtime(st->st_mtim.tv_sec*1e3 + st->st_mtim.tv_nsec*1e-6);
+        f_info->set_createtime(st->st_ctim.tv_sec*SEC_TO_MS + st->st_ctim.tv_nsec*NANO_TO_MS);
+        f_info->set_modifiedtime(st->st_mtim.tv_sec*SEC_TO_MS + st->st_mtim.tv_nsec*NANO_TO_MS);
     }
     else
     {

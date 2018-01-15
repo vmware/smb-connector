@@ -56,4 +56,15 @@
     if(OBJ) \
         delete[] OBJ
 
+/*!
+ * 1 ms = 10^6 nano-seconds
+ * 1 nano-second = 10^(-6) milli seconds
+ *
+ * 1 sec = 1000 milli-seconds
+ */
+
+#define NANO_TO_MS 1e-6 //Product of this with nano-seconds will get us ms
+#define SEC_TO_MS 1e3 //Product of this with seconds will get us ms
+
+
 #endif //COMMON_H_
