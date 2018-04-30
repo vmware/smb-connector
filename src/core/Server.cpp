@@ -142,8 +142,17 @@ void Server::Runloop()
                         || _event_list[i].type & EVENT_HUP)
                     {
                         INFO_LOG("Socket closed");
+                        while(_event_list[i].data == _client_sock)
+                        {
+                            DEBUG_LOG("Handling %s event for client socket",
+                                      _event_list[i].type & EVENT_ERROR ? "EVENT_ERROR" :
+                                      _event_list[i].type & EVENT_RDHUP ? "EVENT_RDHUP" :
+                                      _event_list[i].type & EVENT_HUP ? "EVENT_HUP" :
+                                      "INVALID EVENT");
+                            i++;
+                        }
                         CleanUp();
-                        break;
+                        continue;
                     }
                     if (_event_list[i].type & EVENT_READ)
                     {
