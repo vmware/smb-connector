@@ -50,6 +50,8 @@ public:
     int Init();
     int CredentialsInit(std::string &server, std::string &workgroup, std::string &un, std::string &pass);
 
+    void SetLogLevel();
+
     int OpenDir();
     struct file_info *GetNextFileInfo();
     struct smbc_dirent *GetNextDirent();

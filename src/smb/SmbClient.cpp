@@ -160,7 +160,6 @@ int SmbClient::Init()
 {
     DEBUG_LOG("SmbClient::Init, log_level %d", logLevel);
     Configuration &c = Configuration::GetInstance();
-    extern int logLevel;
     _ctx = smbc_new_context();
 
     if (_ctx == NULL)
@@ -168,7 +167,7 @@ int SmbClient::Init()
         DEBUG_LOG("SmbClient::Init smbc_new_context failed");
         return SMB_ALLOCATION_FAILED;
     }
-    smbc_setDebug(_ctx, logLevel);
+    SetLogLevel();
     smbc_setLogCallback(_ctx, Log_smbclient);
     smbc_setConfiguration(_ctx, c[C_SMB_CONF]);
     SMBCCTX *tmp = smbc_init_context(_ctx);
@@ -210,6 +209,37 @@ int SmbClient::CredentialsInit(std::string &server, std::string &workgroup, std:
     }
 
     return SMB_SUCCESS;
+}
+
+/*!
+ * Convert log level from smb-connector to that
+ * of libsmbclient log level and set the same
+ * for libsmbclient
+ */
+void SmbClient::SetLogLevel()
+{
+    extern int logLevel;
+
+    if (logLevel == LOG_LVL_ERROR)
+    {
+        smbc_setDebug(_ctx, SAMBA_DBG_ERR);
+    }
+    else if (logLevel == LOG_LVL_WARNING)
+    {
+        smbc_setDebug(_ctx, SAMBA_DBG_WARNING);
+    }
+    else if (logLevel == LOG_LVL_INFO)
+    {
+        smbc_setDebug(_ctx, SAMBA_DBG_INFO);
+    }
+    else if (logLevel == LOG_LVL_DEBUG)
+    {
+        smbc_setDebug(_ctx, SAMBA_DBG_DEBUG);
+    }
+    else
+    {
+        smbc_setDebug(_ctx, SAMBA_DBG_ERR);
+    }
 }
 
 /*!
