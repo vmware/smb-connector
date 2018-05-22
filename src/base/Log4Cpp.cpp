@@ -155,33 +155,25 @@ void Log4Cpp::Write(int level, const char *format, va_list arg)
  */
 void Log4Cpp::Write(int level, const char *msg)
 {
-    if (level == LOG_LVL_ERROR)
+    if (level == SAMBA_DBG_ERR)
     {
         _category->log(log4cpp::Priority::ERROR, msg);
     }
-    else if (level == LOG_LVL_WARNING)
+    else if (level == SAMBA_DBG_WARNING)
     {
         _category->log(log4cpp::Priority::WARN, msg);
     }
-    else if (level == LOG_LVL_INFO)
+    else if (level == SAMBA_DBG_INFO)
     {
         _category->log(log4cpp::Priority::INFO, msg);
     }
-    else if (level == LOG_LVL_DEBUG)
+    else if (level == SAMBA_DBG_DEBUG)
     {
         _category->log(log4cpp::Priority::DEBUG, msg);
     }
-    else if (level == LOG_LVL_TRACE)
+    else if (level == SAMBA_DBG_NOTICE)
     {
-        _category->log(log4cpp::Priority::DEBUG, msg);
-    }
-    else if (level == LOG_LVL_DUMP)
-    {
-        _category->log(log4cpp::Priority::DEBUG, msg);
-    }
-    else if (level == LOG_LVL_ALWAYS)
-    {
-        _category->log(log4cpp::Priority::INFO, msg);
+        _category->log(log4cpp::Priority::NOTICE, msg);
     }
 }
 

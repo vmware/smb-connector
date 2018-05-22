@@ -21,6 +21,14 @@
 #define LOG_LVL_NONE        0
 #define LOG_LVL_ALWAYS      -1
 
+
+//Samba logging as per README.Coding
+#define SAMBA_DBG_ERR       0
+#define SAMBA_DBG_WARNING   1
+#define SAMBA_DBG_NOTICE    3
+#define SAMBA_DBG_INFO      5
+#define SAMBA_DBG_DEBUG     10
+
 extern int logLevel;
 
 void Log(int level, const char *format, ...);
