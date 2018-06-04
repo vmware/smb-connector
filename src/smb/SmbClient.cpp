@@ -616,36 +616,54 @@ int SmbClient::create_directory(std::string path)
      */
 
     int ret = smbc_getFunctionMkdir(_ctx)(_ctx, path.c_str(), 0);
-    if(ret != SMB_SUCCESS && errno == ENOENT && path.find_last_of('/') != std::string::npos)
+    if(ret != SMB_SUCCESS && errno == ENOENT)
     {
-        if(create_directory(path.substr(0, path.find_last_of('/'))) != SMB_SUCCESS)
+        //Child folder creation failed since parent folder is not created
+        //Try to create parent folder first
+        if(path.find_last_of('/') != std::string::npos)
         {
-            ERROR_LOG("SmbClient::create_directory parent folder creation failed with error %d", errno);
+            if(create_directory(path.substr(0, path.find_last_of('/'))) != SMB_SUCCESS)
+            {
+                ERROR_LOG("SmbClient::create_directory parent folder creation failed with error %d", errno);
+                return SMB_ERROR;
+            }
+        }
+        else
+        {
+            ERROR_LOG("SmbClient::create_directory reached end of path, cannot create folder");
+            return SMB_ERROR;
+        }
+
+        //Parent folder is created
+        // lets try to create the child folder again now
+        if (smbc_getFunctionMkdir(_ctx)(_ctx, path.c_str(), 0) == SMB_SUCCESS)
+        {
+            DEBUG_LOG("Smbclient::create_directory Directory %s created", path.c_str());
+            return SMB_SUCCESS;
+        }
+        else
+        {
+            ERROR_LOG("SmbClient::create_directory failed for %s with error %d:%d", path.c_str(), ret, errno);
             return SMB_ERROR;
         }
     }
-    else if(ret == SMB_SUCCESS) //If directory created, we are done
-    {
-        DEBUG_LOG("Smbclient::create_directory Directory %s created", path.c_str());
-        return SMB_SUCCESS;
-    }
-    else if(ret != SMB_SUCCESS && errno == EEXIST) //If directory already exists, we are good
+    else if(ret != SMB_SUCCESS && errno == EEXIST) //Child folder already exists, we can break out here
     {
         DEBUG_LOG("SmbClient::create_directory Directory already exists %s", path.c_str());
+        return SMB_SUCCESS;
+    }
+    else if(ret == SMB_SUCCESS) //Child folder is created in recursive call, we can break out here
+    {
+        DEBUG_LOG("Smbclient::create_directory Directory %s created", path.c_str());
         return SMB_SUCCESS;
     }
     else //Some unknown error occurred, propagate the error to caller
     {
         ERROR_LOG("SmbClient::create_directory cannot create directory %s, error:%d", path.c_str(), ret);
-        return ret;
+        return SMB_ERROR;
     }
 
-    ret = smbc_getFunctionMkdir(_ctx)(_ctx, path.c_str(), 0);
-    if(ret == SMB_SUCCESS)
-        DEBUG_LOG("Smbclient::create_directory Directory %s created", path.c_str());
-    else
-        ERROR_LOG("SmbClient::create_directory failed for %s with error %d:%d", path.c_str(), ret, errno);
-    return ret;
+    return SMB_ERROR;
 
 }
 
@@ -664,10 +682,17 @@ int SmbClient::UploadInit(const std::string &uid)
      * Create directory recursively if it doesn't exists
      */
 
-    if(_server.find_last_of('/') != std::string::npos && create_directory("smb://" + _server.substr(0, _server.find_last_of('/'))) == SMB_SUCCESS)
-        DEBUG_LOG("SmbClient::UploadInit Recursive folder exists/created for %s", _server.c_str());
-    else
-        WARNING_LOG("SmbClient::UploadInit Recursive folder create failed for %s", _server.c_str());
+    if(_server.find_last_of('/') != std::string::npos)
+    {
+        if (create_directory("smb://" + _server.substr(0, _server.find_last_of('/'))) == SMB_SUCCESS)
+        {
+            DEBUG_LOG("SmbClient::UploadInit Recursive folder exists/created for %s", _server.c_str());
+        }
+        else
+        {
+            WARNING_LOG("SmbClient::UploadInit Recursive folder create failed for %s", _server.c_str());
+        }
+    }
 
     _server += "." + uid;
     _server += ".smbconnector";
