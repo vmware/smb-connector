@@ -42,6 +42,8 @@ private:
     SMBCFILE *open_dir(std::string server);
     struct smbc_dirent *get_next_dirent(SMBCFILE *file);
 
+    int create_directory(std::string path);
+
 public:
     static SmbClient *GetInstance();
     static void AuthCallback(const char *srv, const char *shr, char *wg, int wglen,

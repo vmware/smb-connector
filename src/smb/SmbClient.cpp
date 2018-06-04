@@ -600,6 +600,56 @@ int SmbClient::DownloadInit()
 }
 
 /*!
+ * Create directory recursivley for non-existing directory
+ * @param path - Complete path where the directory should be created
+ * @return
+ * SMB_SUCCESS - Success
+ * Otherwise - Error
+ */
+int SmbClient::create_directory(std::string path)
+{
+    /*!
+     * We will try to create the child folder first
+     * If it fails with error ENOENT, we try to create parent folder
+     * and then try to create child folder again
+     * If that also fails, we bail out and propagate the error to caller
+     */
+
+    int ret = smbc_getFunctionMkdir(_ctx)(_ctx, path.c_str(), 0);
+    if(ret != SMB_SUCCESS && errno == ENOENT && path.find_last_of('/') != std::string::npos)
+    {
+        if(create_directory(path.substr(0, path.find_last_of('/'))) != SMB_SUCCESS)
+        {
+            ERROR_LOG("SmbClient::create_directory parent folder creation failed with error %d", errno);
+            return SMB_ERROR;
+        }
+    }
+    else if(ret == SMB_SUCCESS) //If directory created, we are done
+    {
+        DEBUG_LOG("Smbclient::create_directory Directory %s created", path.c_str());
+        return SMB_SUCCESS;
+    }
+    else if(ret != SMB_SUCCESS && errno == EEXIST) //If directory already exists, we are good
+    {
+        DEBUG_LOG("SmbClient::create_directory Directory already exists %s", path.c_str());
+        return SMB_SUCCESS;
+    }
+    else //Some unknown error occurred, propagate the error to caller
+    {
+        ERROR_LOG("SmbClient::create_directory cannot create directory %s, error:%d", path.c_str(), ret);
+        return ret;
+    }
+
+    ret = smbc_getFunctionMkdir(_ctx)(_ctx, path.c_str(), 0);
+    if(ret == SMB_SUCCESS)
+        DEBUG_LOG("Smbclient::create_directory Directory %s created", path.c_str());
+    else
+        ERROR_LOG("SmbClient::create_directory failed for %s with error %d:%d", path.c_str(), ret, errno);
+    return ret;
+
+}
+
+/*!
  * Initialises upload module variables and
  * creates, truncates and open file for upload
  * @return
@@ -609,6 +659,16 @@ int SmbClient::DownloadInit()
 int SmbClient::UploadInit(const std::string &uid)
 {
     DEBUG_LOG("SmbClient::UploadInit");
+
+    /*
+     * Create directory recursively if it doesn't exists
+     */
+
+    if(_server.find_last_of('/') != std::string::npos && create_directory("smb://" + _server.substr(0, _server.find_last_of('/'))) == SMB_SUCCESS)
+        DEBUG_LOG("SmbClient::UploadInit Recursive folder exists/created for %s", _server.c_str());
+    else
+        WARNING_LOG("SmbClient::UploadInit Recursive folder create failed for %s", _server.c_str());
+
     _server += "." + uid;
     _server += ".smbconnector";
     return OpenFile(O_CREAT | O_RDWR | O_TRUNC);

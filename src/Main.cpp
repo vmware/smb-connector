@@ -141,7 +141,7 @@ static void process_args(int argc, char *argv[])
     {
         /* getopt_long stores the option index here. */
         int option_index = 0;
-        int c = getopt_long(argc, argv, "hvm:s:o:l:g:u:n:p:w:f:d:a:t:e:b:i:c:", long_options, &option_index);
+        int c = getopt_long(argc, argv, "hvm:s:o:l:g:u:n:p:w:f:d:a:t:e:b:i:c:q:", long_options, &option_index);
 
         if (c == -1)
         {
