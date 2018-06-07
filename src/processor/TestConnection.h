@@ -25,7 +25,7 @@ public:
     virtual int Init(std::string &request_id);
     virtual int ProcessRequest(Packet *packet);
     virtual void Quit();
-    struct file_info *GetFileInfo();
+    const struct libsmb_file_info *GetFileInfo();
     struct stat *GetStat();
 };
 

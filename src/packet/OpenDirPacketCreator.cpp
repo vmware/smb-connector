@@ -108,7 +108,7 @@ int OpenDirPacketCreator::create_get_structure_resp(Packet *packet)
         return SMB_ERROR;
     }
 
-    struct file_info *ptr = NULL;
+    const struct libsmb_file_info *ptr = NULL;
     struct smbc_dirent *dirent = NULL;
     Command *cmd = ALLOCATE(Command);
     ResponsePacket *resp = ALLOCATE(ResponsePacket);
@@ -151,8 +151,8 @@ int OpenDirPacketCreator::create_get_structure_resp(Packet *packet)
                 /* Perform a check for folder */
                 /* Perform a check for hidden files */
                 if (ptr && (strcmp(ptr->name, ".smbconnector") == 0 ||
-                    (!(ptr->mode & FILE_ATTRIBUTE_DIRECTORY) && _processor->ShowOnlyFolders()) ||
-                    (ptr->mode & FILE_ATTRIBUTE_HIDDEN && !_processor->ShowHiddenFiles())))
+                    (!(ptr->attrs & FILE_ATTRIBUTE_DIRECTORY) && _processor->ShowOnlyFolders()) ||
+                    (ptr->attrs & FILE_ATTRIBUTE_HIDDEN && !_processor->ShowHiddenFiles())))
                 {
                     --i;
                     continue;
@@ -162,10 +162,10 @@ int OpenDirPacketCreator::create_get_structure_resp(Packet *packet)
                 {
                     f_info = f_resp->add_fileinformation();
                     f_info->set_name(ptr->name);
-                    f_info->set_isdirectory(ptr->mode & FILE_ATTRIBUTE_DIRECTORY);
-                    f_info->set_resourcetype(ptr->mode);
+                    f_info->set_isdirectory(ptr->attrs & FILE_ATTRIBUTE_DIRECTORY);
+                    f_info->set_resourcetype(ptr->attrs);
                     f_info->set_size(ptr->size);
-                    f_info->set_createtime(ptr->crtime_ts.tv_sec*SEC_TO_MS + ptr->crtime_ts.tv_nsec*NANO_TO_MS);
+                    f_info->set_createtime(ptr->btime_ts.tv_sec*SEC_TO_MS + ptr->btime_ts.tv_nsec*NANO_TO_MS);
                     f_info->set_modifiedtime(ptr->mtime_ts.tv_sec*SEC_TO_MS + ptr->mtime_ts.tv_nsec*NANO_TO_MS);
                 }
                 else if (i > 0)

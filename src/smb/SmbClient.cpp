@@ -168,7 +168,7 @@ int SmbClient::Init()
         return SMB_ALLOCATION_FAILED;
     }
     SetLogLevel();
-    smbc_setLogCallback(_ctx, Log_smbclient);
+    smbc_setLogCallback(_ctx, NULL, Log_smbclient);
     smbc_setConfiguration(_ctx, c[C_SMB_CONF]);
     SMBCCTX *tmp = smbc_init_context(_ctx);
 
@@ -277,10 +277,10 @@ int SmbClient::OpenDir()
  * Returns next file info from linked list after open call
  *
  * @return
- *      file_info - Structure containing file information
+ *      libsmb_file_info - Structure containing file information
  *      NULL - Whole list is traversed
  */
-struct file_info *SmbClient::GetNextFileInfo()
+const struct libsmb_file_info *SmbClient::GetNextFileInfo()
 {
     DEBUG_LOG("SmbClient::GetNextFileInfo");
     if (_file == NULL)

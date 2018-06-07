@@ -38,9 +38,9 @@ Download samba code (version 4.6.6) from [here](https://download.samba.org/pub/s
 
 Extract the same as samba folder in root folder of the project.
 
-Copy readdir-plus-set-config-set-log-callback.patch file in samba folder.
+Copy all patch files from 0001 to 0007 in samba folder.
 
-Apply readdir-plus-set-config-set-log-callback.patch to samba code (git apply readdir-plus-set-config-set-log-callback.patch).
+Apply patch to samba code. Execute following command for all patch files one by one (patch -p1 < 0001-Added-smbc_SetConfiguration-which-lets-the-user-set-.patch)
 
 Build Instructions
 --------------------

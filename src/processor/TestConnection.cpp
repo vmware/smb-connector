@@ -186,10 +186,10 @@ void TestConnection::Quit()
 /*!
  * Get attributes for share
  * @return
- * file_info - Successful
+ * libsmb_file_info - Successful
  * NULL - Failed
  */
-struct file_info *TestConnection::GetFileInfo()
+const struct libsmb_file_info *TestConnection::GetFileInfo()
 {
     DEBUG_LOG("TestConnection::GetFileInfo");
     return SmbClient::GetInstance()->GetNextFileInfo();

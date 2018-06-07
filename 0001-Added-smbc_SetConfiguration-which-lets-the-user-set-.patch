@@ -1,0 +1,400 @@
+From 3904c26ac860038518d4ffae781ddbbf23746715 Mon Sep 17 00:00:00 2001
+From: Puran Chand <pchand@vmware.com>
+Date: Wed, 10 Jan 2018 13:13:44 +0530
+Subject: [PATCH] Added smbc_SetConfiguration which lets the user set the
+ smb.conf for libsmbclient code
+
+BUG: https://bugzilla.samba.org/show_bug.cgi?id=13229
+
+Signed-off-by: Puran Chand <pchand@vmware.com>
+Reviewed-by: Jeremy Allison <jra@samba.org>
+Reviewed-by: Andrew Bartlett <abartlet@samba.org>
+---
+ source3/include/libsmbclient.h              |   4 +
+ source3/libsmb/ABI/smbclient-0.3.2.sigs     | 181 ++++++++++++++++++++++++++++
+ source3/libsmb/libsmb_setget.c              |  15 +++
+ source3/libsmb/wscript                      |   2 +-
+ source3/selftest/tests.py                   |   3 +
+ source4/selftest/tests.py                   |   3 +-
+ source4/torture/libsmbclient/libsmbclient.c |  65 ++++++++++
+ testdata/samba3/smb_new.conf                |   7 ++
+ 8 files changed, 278 insertions(+), 2 deletions(-)
+ create mode 100644 source3/libsmb/ABI/smbclient-0.3.2.sigs
+ create mode 100644 testdata/samba3/smb_new.conf
+
+diff --git a/source3/include/libsmbclient.h b/source3/include/libsmbclient.h
+index 38ba451..7a20679 100644
+--- a/source3/include/libsmbclient.h
++++ b/source3/include/libsmbclient.h
+@@ -483,6 +483,10 @@ void
+ smbc_setLogCallback(SMBCCTX *c, void *private_ptr,
+ 		    smbc_debug_callback_fn fn);
+ 
++/** set configuration file, this is applied at global level */
++int
++smbc_setConfiguration(SMBCCTX *c, const char *file);
++
+ /** Get the netbios name used for making connections */
+ char *
+ smbc_getNetbiosName(SMBCCTX *c);
+diff --git a/source3/libsmb/ABI/smbclient-0.3.2.sigs b/source3/libsmb/ABI/smbclient-0.3.2.sigs
+new file mode 100644
+index 0000000..2f089d8
+--- /dev/null
++++ b/source3/libsmb/ABI/smbclient-0.3.2.sigs
+@@ -0,0 +1,181 @@
++smbc_chmod: int (const char *, mode_t)
++smbc_close: int (int)
++smbc_closedir: int (int)
++smbc_creat: int (const char *, mode_t)
++smbc_fgetxattr: int (int, const char *, const void *, size_t)
++smbc_flistxattr: int (int, char *, size_t)
++smbc_free_context: int (SMBCCTX *, int)
++smbc_fremovexattr: int (int, const char *)
++smbc_fsetxattr: int (int, const char *, const void *, size_t, int)
++smbc_fstat: int (int, struct stat *)
++smbc_fstatvfs: int (int, struct statvfs *)
++smbc_ftruncate: int (int, off_t)
++smbc_getDebug: int (SMBCCTX *)
++smbc_getFunctionAddCachedServer: smbc_add_cached_srv_fn (SMBCCTX *)
++smbc_getFunctionAuthData: smbc_get_auth_data_fn (SMBCCTX *)
++smbc_getFunctionAuthDataWithContext: smbc_get_auth_data_with_context_fn (SMBCCTX *)
++smbc_getFunctionCheckServer: smbc_check_server_fn (SMBCCTX *)
++smbc_getFunctionChmod: smbc_chmod_fn (SMBCCTX *)
++smbc_getFunctionClose: smbc_close_fn (SMBCCTX *)
++smbc_getFunctionClosedir: smbc_closedir_fn (SMBCCTX *)
++smbc_getFunctionCreat: smbc_creat_fn (SMBCCTX *)
++smbc_getFunctionFstat: smbc_fstat_fn (SMBCCTX *)
++smbc_getFunctionFstatVFS: smbc_fstatvfs_fn (SMBCCTX *)
++smbc_getFunctionFstatdir: smbc_fstatdir_fn (SMBCCTX *)
++smbc_getFunctionFtruncate: smbc_ftruncate_fn (SMBCCTX *)
++smbc_getFunctionGetCachedServer: smbc_get_cached_srv_fn (SMBCCTX *)
++smbc_getFunctionGetdents: smbc_getdents_fn (SMBCCTX *)
++smbc_getFunctionGetxattr: smbc_getxattr_fn (SMBCCTX *)
++smbc_getFunctionListPrintJobs: smbc_list_print_jobs_fn (SMBCCTX *)
++smbc_getFunctionListxattr: smbc_listxattr_fn (SMBCCTX *)
++smbc_getFunctionLseek: smbc_lseek_fn (SMBCCTX *)
++smbc_getFunctionLseekdir: smbc_lseekdir_fn (SMBCCTX *)
++smbc_getFunctionMkdir: smbc_mkdir_fn (SMBCCTX *)
++smbc_getFunctionNotify: smbc_notify_fn (SMBCCTX *)
++smbc_getFunctionOpen: smbc_open_fn (SMBCCTX *)
++smbc_getFunctionOpenPrintJob: smbc_open_print_job_fn (SMBCCTX *)
++smbc_getFunctionOpendir: smbc_opendir_fn (SMBCCTX *)
++smbc_getFunctionPrintFile: smbc_print_file_fn (SMBCCTX *)
++smbc_getFunctionPurgeCachedServers: smbc_purge_cached_fn (SMBCCTX *)
++smbc_getFunctionRead: smbc_read_fn (SMBCCTX *)
++smbc_getFunctionReaddir: smbc_readdir_fn (SMBCCTX *)
++smbc_getFunctionRemoveCachedServer: smbc_remove_cached_srv_fn (SMBCCTX *)
++smbc_getFunctionRemoveUnusedServer: smbc_remove_unused_server_fn (SMBCCTX *)
++smbc_getFunctionRemovexattr: smbc_removexattr_fn (SMBCCTX *)
++smbc_getFunctionRename: smbc_rename_fn (SMBCCTX *)
++smbc_getFunctionRmdir: smbc_rmdir_fn (SMBCCTX *)
++smbc_getFunctionSetxattr: smbc_setxattr_fn (SMBCCTX *)
++smbc_getFunctionSplice: smbc_splice_fn (SMBCCTX *)
++smbc_getFunctionStat: smbc_stat_fn (SMBCCTX *)
++smbc_getFunctionStatVFS: smbc_statvfs_fn (SMBCCTX *)
++smbc_getFunctionTelldir: smbc_telldir_fn (SMBCCTX *)
++smbc_getFunctionUnlink: smbc_unlink_fn (SMBCCTX *)
++smbc_getFunctionUnlinkPrintJob: smbc_unlink_print_job_fn (SMBCCTX *)
++smbc_getFunctionUtimes: smbc_utimes_fn (SMBCCTX *)
++smbc_getFunctionWrite: smbc_write_fn (SMBCCTX *)
++smbc_getNetbiosName: char *(SMBCCTX *)
++smbc_getOptionBrowseMaxLmbCount: int (SMBCCTX *)
++smbc_getOptionCaseSensitive: smbc_bool (SMBCCTX *)
++smbc_getOptionDebugToStderr: smbc_bool (SMBCCTX *)
++smbc_getOptionFallbackAfterKerberos: smbc_bool (SMBCCTX *)
++smbc_getOptionFullTimeNames: smbc_bool (SMBCCTX *)
++smbc_getOptionNoAutoAnonymousLogin: smbc_bool (SMBCCTX *)
++smbc_getOptionOneSharePerServer: smbc_bool (SMBCCTX *)
++smbc_getOptionOpenShareMode: smbc_share_mode (SMBCCTX *)
++smbc_getOptionSmbEncryptionLevel: smbc_smb_encrypt_level (SMBCCTX *)
++smbc_getOptionUrlEncodeReaddirEntries: smbc_bool (SMBCCTX *)
++smbc_getOptionUseCCache: smbc_bool (SMBCCTX *)
++smbc_getOptionUseKerberos: smbc_bool (SMBCCTX *)
++smbc_getOptionUseNTHash: smbc_bool (SMBCCTX *)
++smbc_getOptionUserData: void *(SMBCCTX *)
++smbc_getPort: uint16_t (SMBCCTX *)
++smbc_getServerCacheData: struct smbc_server_cache *(SMBCCTX *)
++smbc_getTimeout: int (SMBCCTX *)
++smbc_getUser: char *(SMBCCTX *)
++smbc_getWorkgroup: char *(SMBCCTX *)
++smbc_getdents: int (unsigned int, struct smbc_dirent *, int)
++smbc_getxattr: int (const char *, const char *, const void *, size_t)
++smbc_init: int (smbc_get_auth_data_fn, int)
++smbc_init_context: SMBCCTX *(SMBCCTX *)
++smbc_lgetxattr: int (const char *, const char *, const void *, size_t)
++smbc_list_print_jobs: int (const char *, smbc_list_print_job_fn)
++smbc_listxattr: int (const char *, char *, size_t)
++smbc_llistxattr: int (const char *, char *, size_t)
++smbc_lremovexattr: int (const char *, const char *)
++smbc_lseek: off_t (int, off_t, int)
++smbc_lseekdir: int (int, off_t)
++smbc_lsetxattr: int (const char *, const char *, const void *, size_t, int)
++smbc_mkdir: int (const char *, mode_t)
++smbc_new_context: SMBCCTX *(void)
++smbc_notify: int (int, smbc_bool, uint32_t, unsigned int, smbc_notify_callback_fn, void *)
++smbc_open: int (const char *, int, mode_t)
++smbc_open_print_job: int (const char *)
++smbc_opendir: int (const char *)
++smbc_option_get: void *(SMBCCTX *, char *)
++smbc_option_set: void (SMBCCTX *, char *, ...)
++smbc_print_file: int (const char *, const char *)
++smbc_read: ssize_t (int, void *, size_t)
++smbc_readdir: struct smbc_dirent *(unsigned int)
++smbc_removexattr: int (const char *, const char *)
++smbc_rename: int (const char *, const char *)
++smbc_rmdir: int (const char *)
++smbc_setConfiguration: int (SMBCCTX *, const char *)
++smbc_setDebug: void (SMBCCTX *, int)
++smbc_setFunctionAddCachedServer: void (SMBCCTX *, smbc_add_cached_srv_fn)
++smbc_setFunctionAuthData: void (SMBCCTX *, smbc_get_auth_data_fn)
++smbc_setFunctionAuthDataWithContext: void (SMBCCTX *, smbc_get_auth_data_with_context_fn)
++smbc_setFunctionCheckServer: void (SMBCCTX *, smbc_check_server_fn)
++smbc_setFunctionChmod: void (SMBCCTX *, smbc_chmod_fn)
++smbc_setFunctionClose: void (SMBCCTX *, smbc_close_fn)
++smbc_setFunctionClosedir: void (SMBCCTX *, smbc_closedir_fn)
++smbc_setFunctionCreat: void (SMBCCTX *, smbc_creat_fn)
++smbc_setFunctionFstat: void (SMBCCTX *, smbc_fstat_fn)
++smbc_setFunctionFstatVFS: void (SMBCCTX *, smbc_fstatvfs_fn)
++smbc_setFunctionFstatdir: void (SMBCCTX *, smbc_fstatdir_fn)
++smbc_setFunctionFtruncate: void (SMBCCTX *, smbc_ftruncate_fn)
++smbc_setFunctionGetCachedServer: void (SMBCCTX *, smbc_get_cached_srv_fn)
++smbc_setFunctionGetdents: void (SMBCCTX *, smbc_getdents_fn)
++smbc_setFunctionGetxattr: void (SMBCCTX *, smbc_getxattr_fn)
++smbc_setFunctionListPrintJobs: void (SMBCCTX *, smbc_list_print_jobs_fn)
++smbc_setFunctionListxattr: void (SMBCCTX *, smbc_listxattr_fn)
++smbc_setFunctionLseek: void (SMBCCTX *, smbc_lseek_fn)
++smbc_setFunctionLseekdir: void (SMBCCTX *, smbc_lseekdir_fn)
++smbc_setFunctionMkdir: void (SMBCCTX *, smbc_mkdir_fn)
++smbc_setFunctionNotify: void (SMBCCTX *, smbc_notify_fn)
++smbc_setFunctionOpen: void (SMBCCTX *, smbc_open_fn)
++smbc_setFunctionOpenPrintJob: void (SMBCCTX *, smbc_open_print_job_fn)
++smbc_setFunctionOpendir: void (SMBCCTX *, smbc_opendir_fn)
++smbc_setFunctionPrintFile: void (SMBCCTX *, smbc_print_file_fn)
++smbc_setFunctionPurgeCachedServers: void (SMBCCTX *, smbc_purge_cached_fn)
++smbc_setFunctionRead: void (SMBCCTX *, smbc_read_fn)
++smbc_setFunctionReaddir: void (SMBCCTX *, smbc_readdir_fn)
++smbc_setFunctionRemoveCachedServer: void (SMBCCTX *, smbc_remove_cached_srv_fn)
++smbc_setFunctionRemoveUnusedServer: void (SMBCCTX *, smbc_remove_unused_server_fn)
++smbc_setFunctionRemovexattr: void (SMBCCTX *, smbc_removexattr_fn)
++smbc_setFunctionRename: void (SMBCCTX *, smbc_rename_fn)
++smbc_setFunctionRmdir: void (SMBCCTX *, smbc_rmdir_fn)
++smbc_setFunctionSetxattr: void (SMBCCTX *, smbc_setxattr_fn)
++smbc_setFunctionSplice: void (SMBCCTX *, smbc_splice_fn)
++smbc_setFunctionStat: void (SMBCCTX *, smbc_stat_fn)
++smbc_setFunctionStatVFS: void (SMBCCTX *, smbc_statvfs_fn)
++smbc_setFunctionTelldir: void (SMBCCTX *, smbc_telldir_fn)
++smbc_setFunctionUnlink: void (SMBCCTX *, smbc_unlink_fn)
++smbc_setFunctionUnlinkPrintJob: void (SMBCCTX *, smbc_unlink_print_job_fn)
++smbc_setFunctionUtimes: void (SMBCCTX *, smbc_utimes_fn)
++smbc_setFunctionWrite: void (SMBCCTX *, smbc_write_fn)
++smbc_setLogCallback: void (SMBCCTX *, void *, smbc_debug_callback_fn)
++smbc_setNetbiosName: void (SMBCCTX *, char *)
++smbc_setOptionBrowseMaxLmbCount: void (SMBCCTX *, int)
++smbc_setOptionCaseSensitive: void (SMBCCTX *, smbc_bool)
++smbc_setOptionDebugToStderr: void (SMBCCTX *, smbc_bool)
++smbc_setOptionFallbackAfterKerberos: void (SMBCCTX *, smbc_bool)
++smbc_setOptionFullTimeNames: void (SMBCCTX *, smbc_bool)
++smbc_setOptionNoAutoAnonymousLogin: void (SMBCCTX *, smbc_bool)
++smbc_setOptionOneSharePerServer: void (SMBCCTX *, smbc_bool)
++smbc_setOptionOpenShareMode: void (SMBCCTX *, smbc_share_mode)
++smbc_setOptionSmbEncryptionLevel: void (SMBCCTX *, smbc_smb_encrypt_level)
++smbc_setOptionUrlEncodeReaddirEntries: void (SMBCCTX *, smbc_bool)
++smbc_setOptionUseCCache: void (SMBCCTX *, smbc_bool)
++smbc_setOptionUseKerberos: void (SMBCCTX *, smbc_bool)
++smbc_setOptionUseNTHash: void (SMBCCTX *, smbc_bool)
++smbc_setOptionUserData: void (SMBCCTX *, void *)
++smbc_setPort: void (SMBCCTX *, uint16_t)
++smbc_setServerCacheData: void (SMBCCTX *, struct smbc_server_cache *)
++smbc_setTimeout: void (SMBCCTX *, int)
++smbc_setUser: void (SMBCCTX *, const char *)
++smbc_setWorkgroup: void (SMBCCTX *, char *)
++smbc_set_context: SMBCCTX *(SMBCCTX *)
++smbc_set_credentials: void (const char *, const char *, const char *, smbc_bool, const char *)
++smbc_set_credentials_with_fallback: void (SMBCCTX *, const char *, const char *, const char *)
++smbc_setxattr: int (const char *, const char *, const void *, size_t, int)
++smbc_stat: int (const char *, struct stat *)
++smbc_statvfs: int (char *, struct statvfs *)
++smbc_telldir: off_t (int)
++smbc_unlink: int (const char *)
++smbc_unlink_print_job: int (const char *, int)
++smbc_urldecode: int (char *, char *, size_t)
++smbc_urlencode: int (char *, char *, int)
++smbc_utime: int (const char *, struct utimbuf *)
++smbc_utimes: int (const char *, struct timeval *)
++smbc_version: const char *(void)
++smbc_write: ssize_t (int, const void *, size_t)
+diff --git a/source3/libsmb/libsmb_setget.c b/source3/libsmb/libsmb_setget.c
+index 2ff1140..cb32f5f 100644
+--- a/source3/libsmb/libsmb_setget.c
++++ b/source3/libsmb/libsmb_setget.c
+@@ -106,6 +106,21 @@ smbc_setLogCallback(SMBCCTX *c, void *private_ptr,
+ 	debug_set_callback(private_ptr, fn);
+ }
+ 
++/** set configuration file */
++int smbc_setConfiguration(SMBCCTX *c, const char *file)
++{
++        bool ok;
++
++        ok = lp_load_client_no_reinit(file);
++        if (!ok) {
++                DBG_WARNING("Could not load config file: %s\n", file);
++                errno = ENOENT;
++                return -1;
++        }
++
++        DBG_NOTICE("Configuration loaded successfully: %s\n", file);
++        return 0;
++}
+ /**
+  * Get the timeout used for waiting on connections and response data
+  * (in milliseconds)
+diff --git a/source3/libsmb/wscript b/source3/libsmb/wscript
+index f4c15ca..526434e 100644
+--- a/source3/libsmb/wscript
++++ b/source3/libsmb/wscript
+@@ -27,5 +27,5 @@ def build(bld):
+                        public_headers='../include/libsmbclient.h',
+                        abi_directory='ABI',
+                        abi_match='smbc_*',
+-                       vnum='0.3.1',
++                       vnum='0.3.2',
+                        pc_files='smbclient.pc')
+diff --git a/source3/selftest/tests.py b/source3/selftest/tests.py
+index 54969f8..89c8d60 100755
+--- a/source3/selftest/tests.py
++++ b/source3/selftest/tests.py
+@@ -540,6 +540,9 @@ for t in tests:
+     elif t == "rpc.samba3.netlogon" or t == "rpc.samba3.sessionkey":
+         plansmbtorture4testsuite(t, "nt4_dc", '//$SERVER_IP/tmp -U$USERNAME%$PASSWORD --option=torture:wksname=samba3rpctest')
+         plansmbtorture4testsuite(t, "ad_dc", '//$SERVER/tmp -U$USERNAME%$PASSWORD --option=torture:wksname=samba3rpctest')
++    elif t == "libsmbclient":
++        plansmbtorture4testsuite(t, "nt4_dc", '//$SERVER_IP/tmp -U$USERNAME%%$PASSWORD --option=torture:replace_smbconf=%s' % os.path.join(srcdir(), "testdata/samba3/smb_new.conf"))
++        plansmbtorture4testsuite(t, "ad_dc", '//$SERVER/tmp -U$USERNAME%%$PASSWORD --option=torture:replace_smbconf=%s' % os.path.join(srcdir(), "testdata/samba3/smb_new.conf"))
+     else:
+         plansmbtorture4testsuite(t, "nt4_dc", '//$SERVER_IP/tmp -U$USERNAME%$PASSWORD')
+         plansmbtorture4testsuite(t, "ad_dc", '//$SERVER/tmp -U$USERNAME%$PASSWORD')
+diff --git a/source4/selftest/tests.py b/source4/selftest/tests.py
+index f5ff906..80e5c4c 100755
+--- a/source4/selftest/tests.py
++++ b/source4/selftest/tests.py
+@@ -315,9 +315,10 @@ base = smbtorture4_testsuites("base.")
+ netapi = smbtorture4_testsuites("netapi.")
+ 
+ libsmbclient = smbtorture4_testsuites("libsmbclient.")
++libsmbclient_testargs = ["--option=torture:replace_smbconf=%s/testdata/samba3/smb_new.conf" % srcdir()]
+ 
+ for t in base + raw + smb2 + netapi + libsmbclient:
+-    plansmbtorture4testsuite(t, "ad_dc_ntvfs", ['//$SERVER/tmp', '-U$USERNAME%$PASSWORD'] + ntvfsargs)
++    plansmbtorture4testsuite(t, "ad_dc_ntvfs", ['//$SERVER/tmp', '-U$USERNAME%$PASSWORD'] + ntvfsargs + libsmbclient_testargs)
+ 
+ plansmbtorture4testsuite("raw.qfileinfo.ipc", "ad_dc_ntvfs", '//$SERVER/ipc\$ -U$USERNAME%$PASSWORD')
+ 
+diff --git a/source4/torture/libsmbclient/libsmbclient.c b/source4/torture/libsmbclient/libsmbclient.c
+index 13de2b5..00e766c 100644
+--- a/source4/torture/libsmbclient/libsmbclient.c
++++ b/source4/torture/libsmbclient/libsmbclient.c
+@@ -23,6 +23,9 @@
+ #include "lib/cmdline/popt_common.h"
+ #include <libsmbclient.h>
+ #include "torture/libsmbclient/proto.h"
++#include "lib/param/loadparm.h"
++#include "lib/param/param_global.h"
++#include "dynconfig.h"
+ 
+ /* test string to compare with when debug_callback is called */
+ #define TEST_STRING "smbc_setLogCallback test"
+@@ -93,6 +96,67 @@ static bool torture_libsmbclient_initialize(struct torture_context *tctx)
+ 	return true;
+ }
+ 
++static bool torture_libsmbclient_setConfiguration(struct torture_context *tctx)
++{
++	SMBCCTX *ctx;
++	struct loadparm_global *global_config = NULL;
++	const char *new_smb_conf = torture_setting_string(tctx,
++				"replace_smbconf",
++				"");
++
++	ctx = smbc_new_context();
++	torture_assert(tctx, ctx, "failed to get new context");
++
++	torture_assert(tctx, smbc_init_context(ctx), "failed to init context");
++
++	torture_comment(tctx, "Testing smbc_setConfiguration - new file %s\n",
++		new_smb_conf);
++
++	global_config = get_globals();
++	torture_assert(tctx, global_config, "Global Config is NULL");
++
++	/* check configuration before smbc_setConfiguration call */
++	torture_comment(tctx, "'workgroup' before setConfiguration %s\n",
++			global_config->workgroup);
++	torture_comment(tctx, "'client min protocol' before "
++			"setConfiguration %d\n",
++			global_config->client_min_protocol);
++	torture_comment(tctx, "'client max protocol' before "
++			"setConfiguration %d\n",
++			global_config->_client_max_protocol);
++	torture_comment(tctx, "'client signing' before setConfiguration %d\n",
++			global_config->client_signing);
++	torture_comment(tctx, "'deadtime' before setConfiguration %d\n",
++			global_config->deadtime);
++
++	torture_assert_int_equal(tctx, smbc_setConfiguration(ctx, new_smb_conf),
++			0, "setConfiguration conf file not found");
++
++	/* verify configuration */
++	torture_assert_str_equal(tctx, global_config->workgroup,
++			"NEW_WORKGROUP",
++			"smbc_setConfiguration failed, "
++			"'workgroup' not updated");
++	torture_assert_int_equal(tctx, global_config->client_min_protocol, 7,
++			"smbc_setConfiguration failed, 'client min protocol' "
++			"not updated");
++	torture_assert_int_equal(tctx, global_config->_client_max_protocol, 13,
++			"smbc_setConfiguration failed, 'client max protocol' "
++			"not updated");
++	torture_assert_int_equal(tctx, global_config->client_signing, 1,
++			"smbc_setConfiguration failed, 'client signing' "
++			"not updated");
++	torture_assert_int_equal(tctx, global_config->deadtime, 5,
++			"smbc_setConfiguration failed, 'deadtime' not updated");
++
++	/* Restore configuration to default */
++	smbc_setConfiguration(ctx, get_dyn_CONFIGFILE());
++
++	smbc_free_context(ctx, 1);
++
++	return true;
++}
++
+ static bool test_opendir(struct torture_context *tctx,
+ 			 SMBCCTX *ctx,
+ 			 const char *fname,
+@@ -231,6 +295,7 @@ NTSTATUS torture_libsmbclient_init(TALLOC_CTX *ctx)
+ 	torture_suite_add_simple_test(suite, "version", torture_libsmbclient_version);
+ 	torture_suite_add_simple_test(suite, "initialize", torture_libsmbclient_initialize);
+ 	torture_suite_add_simple_test(suite, "configuration", torture_libsmbclient_configuration);
++	torture_suite_add_simple_test(suite, "setConfiguration", torture_libsmbclient_setConfiguration);
+ 	torture_suite_add_simple_test(suite, "options", torture_libsmbclient_options);
+ 	torture_suite_add_simple_test(suite, "opendir", torture_libsmbclient_opendir);
+ 
+diff --git a/testdata/samba3/smb_new.conf b/testdata/samba3/smb_new.conf
+new file mode 100644
+index 0000000..727e18b
+--- /dev/null
++++ b/testdata/samba3/smb_new.conf
+@@ -0,0 +1,7 @@
++[global]
++   workgroup = NEW_WORKGROUP
++   client min protocol = SMB2
++   client max protocol = SMB3
++   client signing = 1
++   deadtime = 5
++   netbios name = BEDWYR
+\ No newline at end of file
+-- 
+1.8.3.1
+

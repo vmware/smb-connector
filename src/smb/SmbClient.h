@@ -55,7 +55,7 @@ public:
     void SetLogLevel();
 
     int OpenDir();
-    struct file_info *GetNextFileInfo();
+    const struct libsmb_file_info *GetNextFileInfo();
     struct smbc_dirent *GetNextDirent();
     int CloseDir();
 

@@ -33,7 +33,7 @@ public:
 
     virtual int Init(std::string &request_id);
     virtual int ProcessRequest(Packet *request);
-    struct file_info *GetFileInfo();
+    const struct libsmb_file_info *GetFileInfo();
     struct stat *GetStat();
     struct smbc_dirent *GetDirent();
 

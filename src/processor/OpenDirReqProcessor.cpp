@@ -253,10 +253,10 @@ int OpenDirReqProcessor::ProcessRequest(Packet *request)
 /*!
  * Iterate file-list for a directory and return all attributes
  * @return
- * struct file_info - Success
+ * struct lismb_file_info - Success
  * NULL - list traversed
  */
-struct file_info *OpenDirReqProcessor::GetFileInfo()
+const struct libsmb_file_info *OpenDirReqProcessor::GetFileInfo()
 {
     DEBUG_LOG("OpenDirReqProcessor::GetFileInfo");
     return SmbClient::GetInstance()->GetNextFileInfo();
