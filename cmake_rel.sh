@@ -3,12 +3,12 @@ if [ -d cmake-build-release ]
 then
 	cd cmake-build-release
         cmake3 -DCMAKE_BUILD_TYPE=Release ..
-        make all
+				make -j 4 all
 else
         mkdir cmake-build-release
         cd cmake-build-release
         cmake3 ..
-        make all
+				make -j 4 all
 fi
 
 #with symbols
