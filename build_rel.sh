@@ -30,9 +30,8 @@ mv lib_rel lib
 mkdir -p cmake-build-release/lib
 cp -P lib/lib/private/* cmake-build-release/lib
 cd cmake-build-release/lib
-ln -s libsmbclient.so.0.2.3 libsmbclient.so
+ln -s libsmbclient.so.0.4.0 libsmbclient.so
 cd ../..
 ./del_unused_lib.sh cmake-build-release/lib
 ./generate_proto_buf.sh
 ./cmake_rel.sh
-

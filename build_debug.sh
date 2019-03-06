@@ -30,7 +30,7 @@ mv lib_debug lib
 mkdir -p cmake-build-debug/lib
 cp -P lib/lib/private/* cmake-build-debug/lib
 cd cmake-build-debug/lib
-ln -s libsmbclient.so.0.2.3 libsmbclient.so
+ln -s libsmbclient.so.0.4.0 libsmbclient.so
 cd ../..
 ./del_unused_lib.sh cmake-build-debug/lib
 ./generate_proto_buf.sh
