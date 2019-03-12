@@ -382,6 +382,7 @@ int SessionManager::CleanUp()
  */
 int SessionManager::Quit()
 {
+    _reader_cond.notify_all();
     if (_processor_thread)
     {
         _processor_thread->join();
@@ -542,5 +543,7 @@ void SessionManager::FreeAllRequest()
  */
 void SessionManager::ResetTimer()
 {
+    if(should_exit)
+        return;
     _smbConnector->ResetTimer();
 }
