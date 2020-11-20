@@ -15,6 +15,6 @@ wg=`awk 'NR==4' $2`
 while IFS='' read -r line || [[ -n "$line" ]]; do
     echo "starting smbconnector in client mode, socket: $line"
     ulimit -c unlimited
-    nohup /opt/airwatch/content-gateway/smb-connector/smbconnector -m client -s $line -l client$log_count.log -o $3 -g 4 -u $url -n $user -p $pass -w $wg --out_file=out$log_count > client.dat &
+    nohup /opt/vmware/content-gateway/smb-connector/smbconnector -m client -s $line -l client$log_count.log -o $3 -g 4 -u $url -n $user -p $pass -w $wg --out_file=out$log_count > client.dat &
     log_count=$((log_count+1))
 done < "$1"

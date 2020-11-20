@@ -58,6 +58,8 @@ void Configuration::setDefaultValues()
     _table[C_SMB_CONF] = DEFAULT_SMB_CONF;
     _table[C_OUT_FILE] = DEFAULT_OUT_FILE;
     _table[C_CONF_FILE] = DEFAULT_CONF_FILE;
+    _table[C_FILE_UPLOAD_MODE] = DEFAULT_FILE_UPLOAD_MODE;
+    _table[C_IS_KERBEROS] = DEFAULT_IS_KERBEROS;
 }
 
 /*!

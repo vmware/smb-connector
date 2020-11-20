@@ -93,7 +93,7 @@ int Log4Cpp::Init()
     file_layout->setConversionPattern("%d{%Y-%m-%d %H:%M:%S.%l} %t %5p: %m%n");
 
     _ostream_appender = new log4cpp::OstreamAppender("console", &std::cout);
-    _file_appender = new log4cpp::RollingFileAppender("file", c[C_LOG_FILE], 20 * 1024 * 1024, 10, false, 00644);
+    _file_appender = new log4cpp::RollingFileAppender("file", c[C_LOG_FILE], 10 * 1024 * 1024, 5, false, 00644);
     _ostream_appender->setLayout(ostream_layout);
     _file_appender->setLayout(file_layout);
 

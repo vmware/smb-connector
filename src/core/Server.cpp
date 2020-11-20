@@ -181,6 +181,7 @@ void Server::Runloop()
  */
 int Server::CleanUp()
 {
+    std::lock_guard<std::mutex> scoped_lock(_cleanup_mtx);
     DEBUG_LOG("Server::Cleanup");
     _sessionManager.CleanUp();
     if (_client_sock != NULL)

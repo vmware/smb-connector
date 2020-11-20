@@ -92,6 +92,7 @@ int Client::Init(const char *path, int op_code)
     RequestProcessor::GetInstance()->SetWorkGroup(c[C_WORK_GROUP]);
     RequestProcessor::GetInstance()->SetUserName(c[C_USER_NAME]);
     RequestProcessor::GetInstance()->SetPassword(c[C_PASSWORD]);
+    RequestProcessor::GetInstance()->SetKerberos(atoi(c[C_IS_KERBEROS]));
     RequestProcessor::GetInstance()->SetSessionManager(&_sessionManager);
     _sock = new UnixDomainSocket();
     _sun_path = path;

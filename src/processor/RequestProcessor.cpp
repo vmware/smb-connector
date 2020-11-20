@@ -62,7 +62,7 @@ int RequestProcessor::Init(std::string &id)
 {
     assert(id != "");
     DEBUG_LOG("RequestProcessor::Init");
-    SmbClient::GetInstance()->Init();
+    SmbClient::GetInstance()->Init(_kerberos);
     _request_id = id;
     return SMB_SUCCESS;
 }

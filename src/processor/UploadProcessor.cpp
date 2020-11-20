@@ -119,8 +119,11 @@ int UploadProcessor::process_upload_req_data(Packet *packet)
 int UploadProcessor::process_upload_req_data_error()
 {
     DEBUG_LOG("UploadProcessor::process_upload_req_data_error Upload error");
-    SmbClient::GetInstance()->DelTmpFile();
     Configuration &c = Configuration::GetInstance();
+    if(!atoi(c[C_FILE_UPLOAD_MODE]))
+    {
+    SmbClient::GetInstance()->DelTmpFile();
+    }
     if (!atoi(c[C_OP_MODE]))
     {
         should_exit = 1;
@@ -139,7 +142,11 @@ int UploadProcessor::process_upload_req_data_end()
     DEBUG_LOG("UploadProcessor::process_upload_req_data_end");
     _bytes_uploaded = 0;
     SmbClient::GetInstance()->CloseFile();
+    Configuration &c = Configuration::GetInstance();
+    if(!atoi(c[C_FILE_UPLOAD_MODE]))
+    {
     SmbClient::GetInstance()->RestoreTmpFile(_request_id);
+    }
     Packet *resp = ALLOCATE(Packet);
     _packet_creator->CreateStatusPacket(resp, UPLOAD_END_RESP, 0);
     _sessionManager->PushResponse(resp);
@@ -321,7 +328,8 @@ int UploadProcessor::ProcessRequest(Packet *request)
 void UploadProcessor::Quit()
 {
     DEBUG_LOG("UploadProcessor::Quit");
-    if (!_upload_success)
+    Configuration &c = Configuration::GetInstance();
+    if (!atoi(c[C_FILE_UPLOAD_MODE]) && !_upload_success)
     {
         SmbClient::GetInstance()->DelTmpFile();
     }

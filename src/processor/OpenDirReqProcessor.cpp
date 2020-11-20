@@ -23,6 +23,7 @@ OpenDirReqProcessor::OpenDirReqProcessor()
     _show_only_folders = false;
     _fetch_share = false;
     _is_directory = true;
+
 }
 
 /*!

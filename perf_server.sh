@@ -19,14 +19,14 @@ if [ $valgrind_analysis = 1 ]; then
 	while IFS='' read -r line || [[ -n "$line" ]]; do
                 echo "starting smbconnector on socket: $line"
                 ulimit -c unlimited
-                nohup valgrind --leak-check=yes --error-limit=no --xml-file=valgrind_report$count.xml --xml=yes /opt/airwatch/content-gateway/smb-connector/smbconnector -s $line > server.dat &
+                nohup valgrind --leak-check=yes --error-limit=no --xml-file=valgrind_report$count.xml --xml=yes /opt/vmware/content-gateway/smb-connector/smbconnector -s $line > server.dat &
 	count=$(($count+1))
         done < "$1"
 else
 	while IFS='' read -r line || [[ -n "$line" ]]; do
     		echo "starting smbconnector on socket: $line"
     		ulimit -c unlimited
-    		nohup /opt/airwatch/content-gateway/smb-connector/smbconnector -s $line > server.dat &
+    		nohup /opt/vmware/content-gateway/smb-connector/smbconnector -s $line > server.dat &
 	count=$(($count+1))
 	done < "$1"
 fi

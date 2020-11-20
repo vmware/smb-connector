@@ -141,6 +141,13 @@ class SmbDetails : public ::google::protobuf::Message {
   inline ::std::string* release_url();
   inline void set_allocated_url(::std::string* url);
 
+  // optional bool kerberos = 5;
+  inline bool has_kerberos() const;
+  inline void clear_kerberos();
+  static const int kKerberosFieldNumber = 5;
+  inline bool kerberos() const;
+  inline void set_kerberos(bool value);
+
   // @@protoc_insertion_point(class_scope:SmbDetails)
  private:
   inline void set_has_workgroup();
@@ -151,6 +158,8 @@ class SmbDetails : public ::google::protobuf::Message {
   inline void clear_has_password();
   inline void set_has_url();
   inline void clear_has_url();
+  inline void set_has_kerberos();
+  inline void clear_has_kerberos();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
@@ -160,7 +169,7 @@ class SmbDetails : public ::google::protobuf::Message {
   ::std::string* url_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
 
   friend void  protobuf_AddDesc_request_2eproto();
   friend void protobuf_AssignDesc_request_2eproto();
@@ -875,6 +884,28 @@ inline void SmbDetails::set_allocated_url(::std::string* url) {
     clear_has_url();
     url_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   }
+}
+
+// optional bool kerberos = 5;
+inline bool SmbDetails::has_kerberos() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void SmbDetails::set_has_kerberos() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void SmbDetails::clear_has_kerberos() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void SmbDetails::clear_kerberos() {
+  kerberos_ = false;
+  clear_has_kerberos();
+}
+inline bool SmbDetails::kerberos() const {
+  return kerberos_;
+}
+inline void SmbDetails::set_kerberos(bool value) {
+  set_has_kerberos();
+  kerberos_ = value;
 }
 
 // -------------------------------------------------------------------

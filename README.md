@@ -5,7 +5,8 @@ SMB-Connector - C++ connector implementation around libsmbclient
 Overview
 ---------
 
-SMB-Connector provides protobuf based communication mechanism on top of libsmbclient APIs which can be used by gateway to serve multiple clients in parallel. Its easy to integrate SMB-Connector with most of programming language since its the protobuf library can generate data access classes for most of the well know programming languages.
+SMB-Connector is a c++ connector around libsmbclient (samba.org).
+It uses google's protocol buffers message for communication.
 
 Supported OS Versions
 ----------------------
@@ -32,15 +33,6 @@ The directory structure is
     |- unit-tests          - unit test code
 ```
 
-Fetch Samba code and apply patch for new APIs
-----------------
-Download samba code (version 4.6.6) from [here](https://download.samba.org/pub/samba/stable/samba-4.6.6.tar.gz).
-
-Extract the same as samba folder in root folder of the project.
-
-Copy all patch files from 0001 to 0007 in samba folder.
-
-Apply patch to samba code. Execute following command for all patch files one by one (patch -p1 < 0001-Added-smbc_SetConfiguration-which-lets-the-user-set-.patch)
 
 Build Instructions
 --------------------
@@ -68,8 +60,8 @@ SMB-Connector uses gtest (google testing framework) for executing unit-tests
 A local samba server needs to be setup
 
 Steps to setup a local Samba server for unit-test
-- Install Samba (yum install samba)
-- Add a 'test' user (useradd -m test)
-- Set the password for the 'test', the password should be 'test' (passwd test)
-- Add it as samba user (smbpasswd -a test)
-- Allow samba through SELinux (sudo setsebool -P samba_export_all_rw on)
+    1. Install Samba (yum install samba)
+    2. Add a 'test' user (useradd -m test)
+    3. Set the password for the 'test', the password should be 'test' (passwd test)
+    4. Add it as samba user (smbpasswd -a test)
+    5. Allow samba through SELinux (sudo setsebool -P samba_export_all_rw on)

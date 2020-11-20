@@ -151,12 +151,13 @@ void SmbClient::AuthCallback(const char *srv, const char *shr, char *wg, int wgl
 /*!
  *
  * Initialise the libsmbclient library objects
+ * @param kerberos to enable/disable
  * @return
  *      SMB_SUCCESS - Successful
  *      SMB_ALLOCATION_FAILED - Context allocation failed
  *      SMB_INIT_FAILED - ctx init failed
  */
-int SmbClient::Init()
+int SmbClient::Init(bool &kerberos)
 {
     DEBUG_LOG("SmbClient::Init, log_level %d", logLevel);
     Configuration &c = Configuration::GetInstance();
@@ -170,6 +171,11 @@ int SmbClient::Init()
     SetLogLevel();
     smbc_setLogCallback(_ctx, NULL, Log_smbclient);
     smbc_setConfiguration(_ctx, c[C_SMB_CONF]);
+   if(kerberos)
+    {
+        DEBUG_LOG("SmbClient::Init Setting Kerberos Authentication");
+        smbc_setOptionUseKerberos(_ctx, 1);
+    }
     SMBCCTX *tmp = smbc_init_context(_ctx);
 
     if (_ctx != tmp)
@@ -677,6 +683,7 @@ int SmbClient::create_directory(std::string path)
 int SmbClient::UploadInit(const std::string &uid)
 {
     DEBUG_LOG("SmbClient::UploadInit");
+    Configuration &c = Configuration::GetInstance();
 
     /*
      * Create directory recursively if it doesn't exists
@@ -694,8 +701,11 @@ int SmbClient::UploadInit(const std::string &uid)
         }
     }
 
+    if(!atoi(c[C_FILE_UPLOAD_MODE]))
+    {
     _server += "." + uid;
     _server += ".smbconnector";
+    }
     return OpenFile(O_CREAT | O_RDWR | O_TRUNC);
 }
 

@@ -27,6 +27,7 @@ private:
     struct timespec _start;
     struct timespec _end;
     bool timer_expired();
+    std::mutex _cleanup_mtx;
 
 public:
     Server();

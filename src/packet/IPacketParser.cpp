@@ -37,6 +37,10 @@ int IPacketParser::parse_credentials(Packet *packet)
     RequestProcessor::GetInstance()->SetUserName(packet->_pb_msg->requestpacket().smbdetails().username());
     RequestProcessor::GetInstance()->SetPassword(packet->_pb_msg->requestpacket().smbdetails().password());
     RequestProcessor::GetInstance()->SetUrl(packet->_pb_msg->requestpacket().smbdetails().url());
+    if (packet->_pb_msg->requestpacket().smbdetails().has_kerberos())
+    {
+        RequestProcessor::GetInstance()->SetKerberos(packet->_pb_msg->requestpacket().smbdetails().kerberos());
+    }
 
     return SMB_SUCCESS;
 }
