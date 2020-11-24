@@ -49,7 +49,7 @@ public:
     static void AuthCallback(const char *srv, const char *shr, char *wg, int wglen,
                              char *un, int unlen, char *pw, int pwlen);
 
-    int Init();
+    int Init(bool &kerberos);
     int CredentialsInit(std::string &server, std::string &workgroup, std::string &un, std::string &pass);
 
     void SetLogLevel();

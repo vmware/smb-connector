@@ -69,6 +69,7 @@ public:
 #define C_SOCK_NAME     "sock_name"
 #define C_LOG_FILE      "log_file"
 #define C_LOG_LEVEL     "log_level"
+#define C_FILE_UPLOAD_MODE "file_upload_mode"
 
 /* client mode settings */
 #define C_OP_CODE               "op_code"
@@ -96,6 +97,7 @@ public:
 #define C_USER                  "user"
 #define C_GROUP                 "group"
 
+#define C_IS_KERBEROS            "is_kerberos"
 ////////////////////////////////////////////////////////////////////////////////////////
 //                                                                                    //                                                                                        //
 // Default value to be used by Configuration.cpp                                      //
@@ -103,7 +105,7 @@ public:
 //                                                                                    //                                                                                       //
 ////////////////////////////////////////////////////////////////////////////////////////
 
-#define DEFAULT_SMB_CONF    "/opt/airwatch/content-gateway/smb-connector/smb.conf"
+#define DEFAULT_SMB_CONF    "/opt/vmware/content-gateway/smb-connector/smb.conf"
 
 #define DEFAULT_ACCEPT_QUEUE_SIZE   "1"
 #define DEFAULT_UNIX_SOCK_BUFFER    "61440" //60KB
@@ -115,8 +117,9 @@ public:
 #define DEFAULT_IDLE_TIMEOUT        "300" //seconds
 
 #define DEFAULT_SOCK_NAME           "smb-connector"
-#define DEFAULT_LOG_FILE            "/var/log/airwatch/content-gateway/smb-connector/smbconnector.log"
+#define DEFAULT_LOG_FILE            "/var/log/vmware/content-gateway/smb-connector/smbconnector.log"
 #define DEFAULT_LOG_LEVEL           "0"
+#define DEFAULT_FILE_UPLOAD_MODE    "0"
 
 #define DEFAULT_OP_CODE             "0"
 #define DEFAULT_URL                 ""
@@ -133,9 +136,11 @@ public:
 #define DEFAULT_START_OFFSET        "0"
 #define DEFAULT_END_OFFSET          "0"
 
+#define DEFAULT_IS_KERBEROS          "0"
+
 #define DEFAULT_OUT_FILE            "out"
 
-#define DEFAULT_CONF_FILE           "/opt/airwatch/content-gateway/smb-connector/smb-connector.conf"
+#define DEFAULT_CONF_FILE           "/opt/vmware/content-gateway/smb-connector/smb-connector.conf"
 
 
 #endif //CONFIGRUATION_H_

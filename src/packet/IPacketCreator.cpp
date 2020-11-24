@@ -118,6 +118,7 @@ int IPacketCreator::CreateCredentialPacket(Packet *obj)
     smbDetails->set_username(RequestProcessor::GetInstance()->UserName());
     smbDetails->set_password(RequestProcessor::GetInstance()->Password());
     smbDetails->set_url(RequestProcessor::GetInstance()->Url());
+    smbDetails->set_kerberos(RequestProcessor::GetInstance()->Kerberos());
     obj->_pb_msg->mutable_requestpacket()->set_allocated_smbdetails(smbDetails);
 
     return SMB_SUCCESS;

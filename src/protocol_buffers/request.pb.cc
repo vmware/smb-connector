@@ -44,11 +44,12 @@ void protobuf_AssignDesc_request_2eproto() {
       "request.proto");
   GOOGLE_CHECK(file != NULL);
   SmbDetails_descriptor_ = file->message_type(0);
-  static const int SmbDetails_offsets_[4] = {
+  static const int SmbDetails_offsets_[5] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SmbDetails, workgroup_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SmbDetails, username_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SmbDetails, password_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SmbDetails, url_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SmbDetails, kerberos_),
   };
   SmbDetails_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -175,19 +176,20 @@ void protobuf_AddDesc_request_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\rrequest.proto\"P\n\nSmbDetails\022\021\n\tworkgro"
+    "\n\rrequest.proto\"b\n\nSmbDetails\022\021\n\tworkgro"
     "up\030\001 \002(\t\022\020\n\010username\030\002 \002(\t\022\020\n\010password\030\003"
-    " \002(\t\022\013\n\003url\030\004 \002(\t\"\315\001\n\rRequestPacket\022\037\n\ns"
-    "mbDetails\030\001 \001(\0132\013.SmbDetails\0227\n\026folderSt"
-    "ructureRequest\030\002 \001(\0132\027.FolderStructureRe"
-    "quest\0223\n\024rangeDownloadRequest\030\003 \001(\0132\025.Ra"
-    "ngeDownloadRequest\022-\n\021uploadRequestData\030"
-    "\004 \001(\0132\022.UploadRequestData\"k\n\026FolderStruc"
-    "tureRequest\022\027\n\017showOnlyFolders\030\001 \001(\010\022\027\n\017"
-    "showHiddenFiles\030\002 \001(\010\022\020\n\010pageSize\030\003 \002(\r\022"
-    "\r\n\005level\030\004 \001(\r\"E\n\024RangeDownloadRequest\022\r"
-    "\n\005start\030\001 \002(\004\022\013\n\003end\030\002 \002(\004\022\021\n\tchunkSize\030"
-    "\003 \002(\004\"!\n\021UploadRequestData\022\014\n\004data\030\001 \002(\014", 520);
+    " \002(\t\022\013\n\003url\030\004 \002(\t\022\020\n\010kerberos\030\005 \001(\010\"\315\001\n\r"
+    "RequestPacket\022\037\n\nsmbDetails\030\001 \001(\0132\013.SmbD"
+    "etails\0227\n\026folderStructureRequest\030\002 \001(\0132\027"
+    ".FolderStructureRequest\0223\n\024rangeDownload"
+    "Request\030\003 \001(\0132\025.RangeDownloadRequest\022-\n\021"
+    "uploadRequestData\030\004 \001(\0132\022.UploadRequestD"
+    "ata\"k\n\026FolderStructureRequest\022\027\n\017showOnl"
+    "yFolders\030\001 \001(\010\022\027\n\017showHiddenFiles\030\002 \001(\010\022"
+    "\020\n\010pageSize\030\003 \002(\r\022\r\n\005level\030\004 \001(\r\"E\n\024Rang"
+    "eDownloadRequest\022\r\n\005start\030\001 \002(\004\022\013\n\003end\030\002"
+    " \002(\004\022\021\n\tchunkSize\030\003 \002(\004\"!\n\021UploadRequest"
+    "Data\022\014\n\004data\030\001 \002(\014", 538);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "request.proto", &protobuf_RegisterTypes);
   SmbDetails::default_instance_ = new SmbDetails();
@@ -217,6 +219,7 @@ const int SmbDetails::kWorkgroupFieldNumber;
 const int SmbDetails::kUsernameFieldNumber;
 const int SmbDetails::kPasswordFieldNumber;
 const int SmbDetails::kUrlFieldNumber;
+const int SmbDetails::kKerberosFieldNumber;
 #endif  // !_MSC_VER
 
 SmbDetails::SmbDetails()
@@ -239,6 +242,7 @@ void SmbDetails::SharedCtor() {
   username_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   password_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   url_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  kerberos_ = false;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -306,6 +310,7 @@ void SmbDetails::Clear() {
         url_->clear();
       }
     }
+    kerberos_ = false;
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -380,6 +385,22 @@ bool SmbDetails::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
+        if (input->ExpectTag(40)) goto parse_kerberos;
+        break;
+      }
+
+      // optional bool kerberos = 5;
+      case 5: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_kerberos:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &kerberos_)));
+          set_has_kerberos();
+        } else {
+          goto handle_uninterpreted;
+        }
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -438,6 +459,11 @@ void SmbDetails::SerializeWithCachedSizes(
       4, this->url(), output);
   }
 
+  // optional bool kerberos = 5;
+  if (has_kerberos()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(5, this->kerberos(), output);
+  }
+
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -486,6 +512,11 @@ void SmbDetails::SerializeWithCachedSizes(
         4, this->url(), target);
   }
 
+  // optional bool kerberos = 5;
+  if (has_kerberos()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(5, this->kerberos(), target);
+  }
+
   if (!unknown_fields().empty()) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
@@ -523,6 +554,11 @@ int SmbDetails::ByteSize() const {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::StringSize(
           this->url());
+    }
+
+    // optional bool kerberos = 5;
+    if (has_kerberos()) {
+      total_size += 1 + 1;
     }
 
   }
@@ -564,6 +600,9 @@ void SmbDetails::MergeFrom(const SmbDetails& from) {
     if (from.has_url()) {
       set_url(from.url());
     }
+    if (from.has_kerberos()) {
+      set_kerberos(from.kerberos());
+  }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -592,6 +631,7 @@ void SmbDetails::Swap(SmbDetails* other) {
     std::swap(username_, other->username_);
     std::swap(password_, other->password_);
     std::swap(url_, other->url_);
+    std::swap(kerberos_, other->kerberos_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);

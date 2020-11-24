@@ -45,6 +45,7 @@ protected:
 
     std::thread *_async_operation;
     bool _should_exit;
+    bool _kerberos;
 
     static RequestProcessor *_instance;
 
@@ -62,6 +63,8 @@ public:
     /*Getters and Setters */
     const std::string &UserName() const;
     void SetUserName(const std::string &user_name);
+    const bool &Kerberos() const;
+    void SetKerberos(const bool &krb);
     const std::string &Password() const;
     void SetPassword(const std::string &password);
     const std::string &Url() const;

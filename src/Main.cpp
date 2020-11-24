@@ -48,6 +48,7 @@
 "\t\t-p, --password     - password\n" \
 "\t\t-w, --workgroup    - workgroup\n" \
 "\t\t-f, --show_folder  - should show only folders during list-dir operation\n" \
+"\t\t-x, --is_kerberos  - enable kerberos authentication \n" \
 "\t\t-d, --show_hidden  - should show hidden folders as well during list-dir operation\n" \
 "\t\t-a, --page_size    - number of entries to be sent for list-directory operation (default: " DEFAULT_PAGE_SIZE ")\n" \
 "\t\t-t, --start_offset - start offset for range file download (default: " DEFAULT_START_OFFSET" )\n" \
@@ -60,6 +61,9 @@ int should_exit = 0; //Setting this to 1 will exit all threads and bring applica
 int logLevel = LOG_LVL_NONE;
 
 Log4Cpp *logger = NULL;
+
+static int caught_signal=0;
+static char crash_file[64]={0};
 
 static struct option long_options[] =
     {
@@ -84,6 +88,7 @@ static struct option long_options[] =
         {"version",         no_argument,       0, 'v'},
         {"out_file",        required_argument, 0, 'q'},
         {"conf_file",       required_argument, 0, 'k'},
+        {"is_kerberos",     no_argument,       0, 'x'},
         {0, 0, 0, 0}
     };
 
@@ -141,7 +146,7 @@ static void process_args(int argc, char *argv[])
     {
         /* getopt_long stores the option index here. */
         int option_index = 0;
-        int c = getopt_long(argc, argv, "hvm:s:o:l:g:u:n:p:w:f:d:a:t:e:b:i:c:q:", long_options, &option_index);
+        int c = getopt_long(argc, argv, "hvm:s:o:l:g:u:n:p:w:f:d:a:t:e:b:i:c:q:x", long_options, &option_index);
 
         if (c == -1)
         {
@@ -220,6 +225,9 @@ static void process_args(int argc, char *argv[])
             case 'd':
                 config.Set(C_SHOW_HIDDEN_FILES, optarg);
                 break;
+            case 'x':
+                config.Set(C_IS_KERBEROS, "1");
+                break;
             case 'a':
                 config.Set(C_PAGE_SIZE, optarg);
                 break;
@@ -264,38 +272,49 @@ static void process_args(int argc, char *argv[])
  */
 static void segv_handler(int s)
 {
+    /*
+     * Dead lock might happen
+     * when segmentation fault is originated due to logging.
+     * Due to SEGV raised while executing logging statement
+     * it would try to acquire log4cpp internal lock again
+     * while writing to logs in this function which will result in dead lock.
+     *
+     * To avoid above mentioned dead lock
+     * We won't write to the log file at all
+     * https://wiki.sei.cmu.edu/confluence/display/c/SIG30-C.+Call+only+asynchronous-safe+functions+within+signal+handlers
+     * Its a recommened practice to not call async-safe functions which might end us up in libc deadlock (__lll_lock_wait_private () from /lib64/libc.so.6 )
+     * Here we will store the signal value and crash_report file name which will be logged later
+     * once signal_handler function execution is done
+     */
+
+    should_exit = 1;
+    caught_signal=s;
+
     // To generate a crash report, backtrace file
-    ALWAYS_LOG("Caught signal %d\n",s);
 #define MAX_FRAMES 50
 #define LOGNAME_FORMAT "crash_report_%Y_%m_%d_%H_%M_%S"
     void *stack_trace[MAX_FRAMES];
     int num_frames;
     num_frames = backtrace(stack_trace, MAX_FRAMES);
 
-    char filename[64];
     time_t now = time(0);
-    strftime(filename, sizeof(filename), LOGNAME_FORMAT, localtime(&now));	// not thread safe...
+    strftime(crash_file, sizeof(crash_file), LOGNAME_FORMAT, localtime(&now));	// not thread safe...
 
     int fd = -1;
-    fd = open(filename, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR);
+    fd = open(crash_file, O_CREAT | O_RDWR, (mode_t) 0644);
     if(fd >0)
     {
-        ERROR_LOG("Crash Report generated in file %s", filename);
         backtrace_symbols_fd(stack_trace, num_frames, fd);
         close(fd);
     }
-    else
-        ERROR_LOG("Cannot Open file to store crash report");
-
-    kill(getpid(), SIGKILL);		// kill this process immediately
 }
 
 #endif
 
 static void my_handler(int s)
 {
-    ALWAYS_LOG("Caught signal %d\n", s);
     should_exit = 1;
+    caught_signal = s;
 }
 
 int main(int argc, char *argv[])
@@ -305,12 +324,10 @@ int main(int argc, char *argv[])
     prctl(PR_SET_PDEATHSIG, SIGHUP);
     prctl(PR_SET_PDEATHSIG, SIGTERM);
     prctl(PR_SET_PDEATHSIG, SIGINT);
-    // Disable SIGPIPE signal that may terminate the server unintentionally
+    // Disable SIGPIPE signal that may terminate the smbconnector unintentionally
     signal(SIGPIPE, SIG_IGN);
     setbuf(stdout, static_cast<char *>(NULL));
     signal(SIGINT, static_cast<__sighandler_t>(my_handler));
-    signal(SIGTERM, static_cast<__sighandler_t>(my_handler));
-    signal(SIGHUP, static_cast<__sighandler_t>(my_handler));
 #ifndef _DEBUG_
     signal(SIGSEGV, static_cast<__sighandler_t>(segv_handler));
 #endif
@@ -388,12 +405,14 @@ int main(int argc, char *argv[])
         smbConnector->Init(c[C_SOCK_NAME]);
     }
 
-    // change permisson for domain-socket file
-    // so that it can be deleted later while going down
+    // change permission for domain-socket/log file to nobody
     struct passwd *linux_user = getpwnam(c[C_USER]);
     if(linux_user)
     {
         chown(c[C_SOCK_NAME],
+              linux_user->pw_uid,
+              linux_user->pw_gid);
+        chown(c[C_LOG_FILE],
               linux_user->pw_uid,
               linux_user->pw_gid);
     }
@@ -405,6 +424,16 @@ int main(int argc, char *argv[])
 
     smbConnector->Quit();
     FREE(smbConnector);
+
+    if(caught_signal != 0)
+    {
+        //signal handler was called
+        ALWAYS_LOG("Caught signal %d", caught_signal);
+        if(caught_signal == SIGSEGV && strlen(crash_file) > 0)
+        {
+            ALWAYS_LOG("Crash report generated in %s", crash_file);
+        }
+    }
 
     logger->Quit();
     FREE(logger);

@@ -118,8 +118,8 @@ int DownloadPacketCreator::create_download_req_init_resp(Packet *packet)
     ptr = _processor->GetStat();
     assert(ptr != NULL);
     fInfo->set_size(ptr->st_size);
-    fInfo->set_createtime(ptr->st_ctim.tv_sec*SEC_TO_MS + ptr->st_ctim.tv_nsec*NANO_TO_MS);
-    fInfo->set_modifiedtime(ptr->st_mtim.tv_sec*SEC_TO_MS + ptr->st_mtim.tv_nsec*NANO_TO_MS);
+    fInfo->set_createtime(ptr->st_ctim.tv_sec);
+    fInfo->set_modifiedtime(ptr->st_mtim.tv_sec);
     dResp->set_allocated_fileinformation(fInfo);
 
     /*DownloadInitResponse*/

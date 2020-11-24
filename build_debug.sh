@@ -30,8 +30,18 @@ mv lib_debug lib
 mkdir -p cmake-build-debug/lib
 cp -P lib/lib/private/* cmake-build-debug/lib
 cd cmake-build-debug/lib
-ln -s libsmbclient.so.0.4.0 libsmbclient.so
+ln -s libsmbclient.so.0 libsmbclient.so
 cd ../..
 ./del_unused_lib.sh cmake-build-debug/lib
 ./generate_proto_buf.sh
+
+File=/etc/os-release
+if [ -f $File ]; then
+	if grep -q 'ID="sles"' "$File"; then
+		build-wrapper-linux-x86-64 --out-dir bw_output ./cmake_debug.sh
+	else
 ./cmake_debug.sh
+	fi
+else
+	./cmake_debug.sh
+fi

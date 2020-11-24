@@ -10,6 +10,7 @@ message SmbDetails {
     required string username = 2;
     required string password = 3;
     required string url = 4;
+    optional bool kerberos = 5;
 }
 message RequestPacket {
     optional SmbDetails smbDetails = 1;
